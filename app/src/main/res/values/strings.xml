@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">ReceiptSystem</string>
+
+    <string name="username">UserName</string>
+    <string name="password">Password</string>
+    <string name="Login">Login</string>
+    <string name="OpenSetting">Open Setting</string>
+    <string name="required">*Required</string>
+
+    <string name="item_Name_">Item Name</string>
+    <string name="item_code_">ItemCode</string>
+    <string name="item_price">Price</string>
+    <string name="item_Qty">Qty</string>
+    <string name="free">bonus</string>
+    <string name="ok">OK</string>
+    <string name="invaledZero">Invaled Zero</string>
+    <string name="customer">Customer</string>
+    <string name="PassowrdSetting">Passowrd Setting</string>
+    <string name="MaxVoMsg1">Max Vocher Num is</string>
+    <string name="MaxVoMsg2">,so you can set Vocher Num</string>
+    <string name="MaxVoMsg3">and above</string>
+    <string name="savedSuccsesfule">Saved Successfully</string>
+    <string name="fillbasket">fill The List with Items!!</string>
+    <string name="order_requst">purchase_requst</string>
+    <string name="vocher">Vocher</string>
+    <string name="confirm_title">Confirm</string>
+    <string name="messageExit">Are You Sure To Exit ?</string>
+    <string name="messageExit2">You will lose all data, Are You Sure To Exit ?</string>
+    <string name="messageExit3">Are You Sure To Exit ?</string>
+    <string name="yes">Yes</string>
+    <string name="No">No</string>
+    <string name="importdata">Import Data</string>
+    <string name="exportdata">Export data</string>
+    <string name="exportdatamsg">Export data before Import</string>
+    <string name="save">Save</string>
+    <string name="saverec">Save Receipt</string>
+    <string name="colse">Close</string>
+    <string name="discount_">Discount</string>
+    <string name="addTotaldis">add Total dis</string>
+    <string name="app_disc_value2">disc value</string>
+    <string name="app_disc_type1">Value</string>
+    <string name="app_disc_type2">Percent</string>
+    <string name="total">Total</string>
+    <string name="net_sales">Net Sales</string>
+    <string name="vlauoftotaldis">Total Dis Value</string>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ReceiptSystem</string>
+
+    <string name="username">اسم المستخدم</string>
+    <string name="password">كلمة المرور</string>
+    <string name="Login">تسجيل دخول</string>
+    <string name="OpenSetting">الإعدادات</string>
+    <string name="required">*مطلوب</string>
+
+    <string name="item_Name_">اسم المادة</string>
+    <string name="item_code_">رقم المادة</string>
+    <string name="item_price">السعر</string>
+    <string name="item_Qty">الكمية</string>
+    <string name="free">المجاني</string>
+    <string name="ok">OK</string>
+    <string name="invaledZero">Invaled Zero</string>
+    <string name="customer">العميل</string>
+
+    <string name="MaxVoMsg1">أكبر رقم فاتورة هو </string>
+    <string name="MaxVoMsg2">تستطيع وضع رقم,</string>
+    <string name="MaxVoMsg3">أو أكبر</string>
+    <string name="savedSuccsesfule">تم الحفظ بنجاح</string>
+    <string name="fillbasket">fill The List with Items!!</string>
+    <string name="order_requst">طلب شراء</string>
+    <string name="vocher">فاتورة</string>
+    <string name="confirm_title">تأكيد</string>
+    <string name="messageExit">هل تريد الخروج؟</string>
+    <string name="messageExit2">ستفقد جميع البيانات، هل تريد الخروج؟</string>
+    <string name="messageExit3">هل تريد الخروج؟</string>
+    <string name="yes">نعم</string>
+    <string name="No">لا</string>
+    <string name="exportdatamsg">Export data before Import</string>
+    <string name="save">حفظ</string>
+    <string name="saverec">حفظ الاستلام</string>
+    <string name="colse">إلغاء</string>
+    <string name="discount_">الخصم</string>
+    <string name="addTotaldis">إضافة خصم كلي</string>
+    <string name="app_disc_type1">قيمة</string>
+    <string name="app_disc_type2">نسبة</string>
+    <string name="total">الإجمالي</string>
+    <string name="net_sales">الصافي</string>
+    <string name="vlauoftotaldis">إجمالي الخصم الكلي</string>
+</resources>
