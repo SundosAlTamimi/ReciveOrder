@@ -68,6 +68,7 @@ import static com.hiaryabeer.receiptsystem.Acitvits.Login.SETTINGS_PREFERENCES;
 import static com.hiaryabeer.receiptsystem.Acitvits.Login.coNo;
 import static com.hiaryabeer.receiptsystem.Acitvits.Login.ipAddress;
 import static com.hiaryabeer.receiptsystem.Acitvits.Login.ipPort;
+import static com.hiaryabeer.receiptsystem.Acitvits.Login.listAllVendor;
 
 public class MainActivity extends
         AppCompatActivity    {
@@ -86,18 +87,19 @@ public class MainActivity extends
     private AutoCompleteTextView customerTv;
         TextView itemname  ,itemprice,vlauoftotaldis, netsales;
     Items item;
-    int pos  ,vohno,num_items=1;
+    int pos ,orderno ,vohno,num_items=1;
     public static ArrayList<Items> vocher_Items = new ArrayList<>();
     public  ArrayList<ReceiptDetails> ordersDetailslist = new ArrayList<>();
     GeneralMethod generalMethod;
     private List<CustomerInfo> customerInfoList=new ArrayList<>();
+    private List<CustomerInfo> VendorInfoList=new ArrayList<>();
     private ArrayList<String> customerNames=new ArrayList<>();
     String Cus_selection;
     private TextInputLayout customer_textInput;
     double   itemTax=0,itemTotal=0,subTotal=0,itemTotalAfterTax=0,netTotal=0;
     private double itemTotalPerc=0,itemDiscVal=0,totalDiscount=0,totalTaxValue=0;
   RadioGroup radioGroup;
-    AppCompatRadioButton order,vocher;
+    AppCompatRadioButton order,vocher,cash,cridt;
 ExportData exportData;
 TextView menu;
  ImportData importData;
@@ -157,6 +159,38 @@ TextView menu;
         menu=findViewById(R.id.menuBtn);
         order=findViewById(R.id.order);
         vocher=findViewById(R.id.vocher);
+        cash=findViewById(R.id.cash);
+        cridt=findViewById(R.id.cridt);
+
+        final RadioGroup radio = (RadioGroup) findViewById(R.id.radioGroup);
+        radio.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                View radioButton = radio.findViewById(checkedId);
+                int index = radio.indexOfChild(radioButton);
+
+                // Add logic here
+
+                switch (index) {
+                    case 0: // first button
+                        VendorInfoList.clear();
+                        VendorInfoList = mydatabase.customers_dao().getAllVendor();
+                        fillCustomerspinner(VendorInfoList);
+                        Toast.makeText(getApplicationContext(), "Selected button number " + index, 500).show();
+                        break;
+                    case 1: // secondbutton
+                        customerInfoList.clear();
+                        customerInfoList = mydatabase.customers_dao().getAllCustms();
+
+                        fillCustomerspinner(customerInfoList);
+                        Toast.makeText(getApplicationContext(), "Selected button number " + index, 500).show();
+                        break;
+                }
+            }
+        });
+
         radioGroup=findViewById(R.id.radioGroup);
         exportData = new ExportData(MainActivity.this);
         generalMethod=new GeneralMethod(MainActivity.this);
@@ -366,13 +400,7 @@ TextView menu;
         customer_textInput = findViewById(R.id.customer_textInput);
         customerTv = findViewById(R.id.customerTv);
 
-try {
-    fillCustomerspinner();
-}
-     catch (Exception exception)
-     {
 
-     }
         Save.setOnClickListener(onClickListener);
         close.setOnClickListener(onClickListener);
 
@@ -385,12 +413,12 @@ try {
             }
         });
     }
-    public void  fillCustomerspinner(){
-        customerInfoList.clear();
+    public void  fillCustomerspinner(List<CustomerInfo>customerInfoList){
+       // customerInfoList.clear();
         customerNames.clear();
 
 
-                customerInfoList = mydatabase.customers_dao().getAllCustms();
+
 
 
         for (int i = 0; i < customerInfoList.size(); i++) {
@@ -647,11 +675,22 @@ void addItem(String itemno){
         Log.e("vocher_ItemsSize==",vocher_Items.size()+"");
         for (int i = 0; i < vocher_Items.size(); i++) {
             ReceiptDetails ordersDetails = new ReceiptDetails();
-            if(order.isChecked())
+            if(order.isChecked()) {
                 ordersDetails.setVOUCHERTYPE(505);
-            else
+
+            }
+            else {
                 ordersDetails.setVOUCHERTYPE(504);
 
+            }
+            if(cash.isChecked()) {
+                ordersDetails.setPaymethod(1);
+
+            }
+            else {
+                ordersDetails.setVOUCHERTYPE(2);
+
+            }
             ordersDetails.setDiscount(vocher_Items.get(i).getDiscount());
             ordersDetails.setItemNo(vocher_Items.get(i).getITEMNO());
             ordersDetails.setFree(vocher_Items.get(i).getFree());
@@ -735,6 +774,16 @@ void addItem(String itemno){
 
         ReceiptMaster orderMaster = new ReceiptMaster();
         orderMaster.setIsPosted(0);
+
+        if(cash.isChecked()) {
+            orderMaster.setPaymethod(1);
+
+        }
+        else {
+            orderMaster.setVOUCHERTYPE(2);
+
+        }
+
         orderMaster.setUserNo(Login.salmanNumber);
         orderMaster. setDiscounttype(distype);
         if(order.isChecked())
@@ -801,18 +850,32 @@ void addItem(String itemno){
 
 
 
- {
+
             SharedPreferences sharedPref = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE);
             vohno =Integer.parseInt(sharedPref.getString(Login.maxVoch_PREF, "")) ;
+     orderno =Integer.parseInt(sharedPref.getString(Login.max_Order_PREF, "")) ;
             Log.e("vohno===",vohno+"");
             // vohno =Integer.parseInt(vohno) ;
-            orderMaster.setVhfNo(vohno);
+
+     if(orderMaster.getVOUCHERTYPE()==504)
+     {   orderMaster.setVhfNo(vohno);
             mydatabase.receiptMaster_dao().insertOrder(orderMaster);
 
             for (int l = 0; l < ordersDetailslist.size(); l++) {
                 ordersDetailslist.get(l).setVhfNo(vohno);
                 mydatabase.receiptDetails_dao().insertOrder(ordersDetailslist.get(l));
             }
+        }
+
+        else
+        { orderMaster.setVhfNo(orderno);
+            mydatabase.receiptMaster_dao().insertOrder(orderMaster);
+
+            for (int l = 0; l < ordersDetailslist.size(); l++) {
+                ordersDetailslist.get(l).setVhfNo(orderno);
+                mydatabase.receiptDetails_dao().insertOrder(ordersDetailslist.get(l));
+            }
+
         }
 
         ordersDetailslist.clear();
@@ -849,6 +912,7 @@ void importdata(){
         ImportData.AllImportItemlist.clear();
         Login.         allUnitDetails.clear();
         Login.  allCustomers.clear();
+        listAllVendor.clear();
         Login.    allUsers.clear();
 
         //          importData.getAllItems3();
@@ -914,7 +978,7 @@ void importdata(){
                                         response.getJSONObject(i).getString("CUSTID"),
                                         response.getJSONObject(i).getString("CUSTNAME"),
                                         response.getJSONObject(i).getString("MOBILE"),
-                                        1));
+                                        1,0));
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -1220,4 +1284,6 @@ void addTotalDisDailog(){
             return false;
         }
     };
+
+
 }

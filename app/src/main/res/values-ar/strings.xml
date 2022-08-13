@@ -23,6 +23,10 @@
     <string name="savedSuccsesfule">تم الحفظ بنجاح</string>
     <string name="fillbasket">fill The List with Items!!</string>
     <string name="order_requst">طلب شراء</string>
+    <string name="cash">نقدا</string>
+    <string name="cridt">ذمم</string>
+    <string name="paymethod">طريقة الدفع</string>
+
     <string name="vocher">فاتورة</string>
     <string name="confirm_title">تأكيد</string>
     <string name="messageExit">هل تريد الخروج؟</string>

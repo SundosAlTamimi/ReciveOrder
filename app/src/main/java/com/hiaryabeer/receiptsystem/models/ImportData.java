@@ -41,7 +41,7 @@ public class ImportData {
    ApiService apiService;
    private static Context context;
    public String ipAddress = "", CONO = "",ipPort="", headerDll = "", link = "";
-   public static SweetAlertDialog pditem,pDialog,pDialog2, pDialog3;;
+   public static SweetAlertDialog pditem,pDialog,pDialog2, pDialog3, pDialog4;;
 AppDatabase my_dataBase;
    SharedPreferences sharedPref;
    private void getIpAddress() {
@@ -303,6 +303,13 @@ AppDatabase my_dataBase;
       void onError(String error);
 
    }
+   public interface GetVendorCallBack {
+
+      void onResponse(JSONArray response);
+
+      void onError(String error);
+
+   }
    public void getAllUsers(GetUsersCallBack getUsersCallBack, String ipAddress, String ipPort, String coNo) {
 
       pDialog3 = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
@@ -359,5 +366,60 @@ AppDatabase my_dataBase;
       RequestQueueSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(jsonArrayRequest);
 
    }
+   public void getAllVendor(GetUsersCallBack GetVendorCallBack, String ipAddress, String ipPort, String coNo) {
 
+      pDialog4 = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+
+      pDialog4.getProgressHelper().setBarColor(Color.parseColor("#115571"));
+      pDialog4.setTitleText("Loading ...");
+      pDialog4.setCancelable(false);
+      pDialog4.show();
+      if (!ipAddress.equals("")  || !coNo.equals(""))
+         link = "http://" + ipAddress + headerDll.trim() + "/GetVendorAll";
+
+      Log.e("getAllVendor", link);
+
+      JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(link, new Response.Listener<JSONArray>() {
+         @Override
+         public void onResponse(JSONArray response) {
+
+            GetVendorCallBack.onResponse(response);
+            pDialog4.dismissWithAnimation();
+            GeneralMethod.showSweetDialog(context, 1, "Data Saved", null);
+            Log.e("getAllVendor", response + "");
+
+         }
+      }, new Response.ErrorListener() {
+         @Override
+         public void onErrorResponse(VolleyError error) {
+
+            GetVendorCallBack.onError(error.getMessage() + "");
+            pDialog4.dismissWithAnimation();
+            if ((error.getMessage() + "").contains("SSLHandshakeException") || (error.getMessage() + "").equals("null")) {
+
+               GeneralMethod.showSweetDialog(context, 0, null, "Connection to server failed");
+
+            } else if ((error.getMessage() + "").contains("ConnectException")) {
+
+               GeneralMethod.showSweetDialog(context, 0, "Connection Failed", null);
+
+            } else if ((error.getMessage() + "").contains("NoRouteToHostException")) {
+
+               GeneralMethod.showSweetDialog(context, 3, "", "Please check the entered IP info");
+
+            } else if ((error.getMessage() + "").contains("No Data Found")) {
+
+               GeneralMethod.showSweetDialog(context, 3, "", "No Users Found");
+               my_dataBase.usersDao().insertUser(new User("010101", "admin", "2022", 1, 1, 0));
+
+            }
+            Log.e("getAllVendorError", error.getMessage() + "");
+
+         }
+      });
+
+      jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+      RequestQueueSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(jsonArrayRequest);
+
+   }
 }

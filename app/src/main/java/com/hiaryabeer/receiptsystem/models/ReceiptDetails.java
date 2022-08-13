@@ -85,7 +85,16 @@ public class ReceiptDetails {
     @ColumnInfo(name = "WHICHUQTY")
     public String WHICHUQTY;
 
+    @ColumnInfo(name = "Paymethod")
+    private int Paymethod;
 
+    public int getPaymethod() {
+        return Paymethod;
+    }
+
+    public void setPaymethod(int paymethod) {
+        Paymethod = paymethod;
+    }
     @ColumnInfo(name = "VOUCHERTYPE")
     private int  VOUCHERTYPE;
 

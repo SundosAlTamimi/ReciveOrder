@@ -28,12 +28,24 @@ public class CustomerInfo {
 
     @ColumnInfo(name = "Is_Posted")
     private int isPosted;
+    @ColumnInfo(name = "isVendor")
+    private int isVendor;
 
-    public CustomerInfo(@NonNull String customerId, String customerName, String phoneNo, int isPosted) {
-        this.isPosted = isPosted;
+    public int getIsVendor() {
+        return isVendor;
+    }
+
+    public void setIsVendor(int isVendor) {
+        this.isVendor = isVendor;
+    }
+
+    public CustomerInfo( String customerId, String customerName, String phoneNo, int isPosted, int isVendor) {
+
         this.customerId = customerId;
         this.customerName = customerName;
         this.phoneNo = phoneNo;
+        this.isPosted = isPosted;
+        this.isVendor = isVendor;
     }
 
     public CustomerInfo() {

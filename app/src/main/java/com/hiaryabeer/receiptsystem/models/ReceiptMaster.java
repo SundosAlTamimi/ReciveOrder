@@ -58,6 +58,16 @@ public class ReceiptMaster {
     private double totalVoucherDiscount;
     @ColumnInfo(name = "ConfirmState")
     private int ConfirmState;
+    @ColumnInfo(name = "Paymethod")
+    private int Paymethod;
+
+    public int getPaymethod() {
+        return Paymethod;
+    }
+
+    public void setPaymethod(int paymethod) {
+        Paymethod = paymethod;
+    }
 
     public double getVoucherDiscountvalue() {
         return voucherDiscountvalue;

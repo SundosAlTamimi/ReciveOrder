@@ -12,9 +12,10 @@ import java.util.List;
 @Dao
 public interface Customers_Dao {
 
-    @Query("SELECT * FROM Customers_Info")
+    @Query("SELECT * FROM Customers_Info Where isVendor=0")
     List<CustomerInfo> getAllCustms();
-
+    @Query("SELECT * FROM Customers_Info Where isVendor=1")
+    List<CustomerInfo> getAllVendor();
     @Insert
     void insertAllCustms(CustomerInfo... customerInfos);
     @Insert

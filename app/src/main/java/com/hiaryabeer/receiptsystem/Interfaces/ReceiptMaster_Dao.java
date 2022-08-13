@@ -40,8 +40,10 @@ public interface ReceiptMaster_Dao {
 
 
 
-    @Query("SELECT VHFNO FROM ReceiptMaster_Table where VHFNO= (SELECT MAX(VHFNO) FROM ReceiptMaster_Table) and IS_Posted='0'")
+    @Query("SELECT VHFNO FROM ReceiptMaster_Table where VHFNO= (SELECT MAX(VHFNO) FROM ReceiptMaster_Table) and VOUCHERTYPE=504")
     int getLastVoherNo ( );
+    @Query("SELECT VHFNO FROM ReceiptMaster_Table where VHFNO= (SELECT MAX(VHFNO) FROM ReceiptMaster_Table) and VOUCHERTYPE=505")
+    int getLastorderNo ( );
     @Query("delete from ReceiptMaster_Table where VHFNO= :vohno")
     int deleteOrderByVOHNO(int vohno);
 

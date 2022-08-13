@@ -22,6 +22,9 @@
     <string name="savedSuccsesfule">Saved Successfully</string>
     <string name="fillbasket">fill The List with Items!!</string>
     <string name="order_requst">purchase_requst</string>
+    <string name="cash">Cash</string>
+    <string name="cridt">Cridt</string>
+    <string name="paymethod">Pay Method</string>
     <string name="vocher">Vocher</string>
     <string name="confirm_title">Confirm</string>
     <string name="messageExit">Are You Sure To Exit ?</string>
