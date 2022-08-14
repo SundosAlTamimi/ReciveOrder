@@ -441,6 +441,7 @@ public class Login extends AppCompatActivity {
                             ImportData.AllImportItemlist.clear();
                             allUnitDetails.clear();
                             allCustomers.clear();
+
                                     listAllVendor.clear();
                            allUsers.clear();
                             importData=new ImportData(Login.this);

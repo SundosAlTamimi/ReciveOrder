@@ -24,6 +24,7 @@ public interface Items_Dao {
 
     @Query("SELECT * FROM Items_Table WHERE Item_Num= :itemNo")
    Items getItembyCode(String itemNo);
-
+    @Query("SELECT * FROM Items_Table")
+    List<Items>  getAllItems();
 
 }

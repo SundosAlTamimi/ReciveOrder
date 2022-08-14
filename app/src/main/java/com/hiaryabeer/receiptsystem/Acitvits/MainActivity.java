@@ -20,7 +20,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,13 +37,16 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.hiaryabeer.receiptsystem.Adapters.Adapter;
 import com.hiaryabeer.receiptsystem.Adapters.ItemsAdapter;
 import com.hiaryabeer.receiptsystem.R;
 import com.hiaryabeer.receiptsystem.models.AppDatabase;
@@ -72,7 +78,10 @@ import static com.hiaryabeer.receiptsystem.Acitvits.Login.listAllVendor;
 
 public class MainActivity extends
         AppCompatActivity    {
-        EditText
+    public static List<Items> AllItemstest = new ArrayList<>();
+    public static List<Items> AllItemDBlist = new ArrayList<>();
+    public static Dialog dialog1;
+    public static  EditText
                 itemcode,
                  itemqty,
 
@@ -85,7 +94,7 @@ public class MainActivity extends
 
         AppDatabase mydatabase;
     private AutoCompleteTextView customerTv;
-        TextView itemname  ,itemprice,vlauoftotaldis, netsales;
+    public static   TextView search, itemname  ,itemprice,vlauoftotaldis, netsales;
     Items item;
     int pos ,orderno ,vohno,num_items=1;
     public static ArrayList<Items> vocher_Items = new ArrayList<>();
@@ -105,13 +114,14 @@ TextView menu;
  ImportData importData;
  double AllVocherDiscount=0;
  int distype=0;
+   int paymethod=0,VochType=504;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
           init();
-
+        AllItemDBlist.addAll(mydatabase.itemsDao().getAllItems());
         itemcode.requestFocus();
           menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,35 +172,58 @@ TextView menu;
         cash=findViewById(R.id.cash);
         cridt=findViewById(R.id.cridt);
 
-        final RadioGroup radio = (RadioGroup) findViewById(R.id.radioGroup);
-        radio.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        final RadioGroup payradioGroup = (RadioGroup) findViewById(R.id.payradioGroup);
+        payradioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-                View radioButton = radio.findViewById(checkedId);
-                int index = radio.indexOfChild(radioButton);
+                View radioButton = payradioGroup.findViewById(checkedId);
+                int index = payradioGroup.indexOfChild(radioButton);
 
                 // Add logic here
 
                 switch (index) {
-                    case 0: // first button
+                    case 0: // first button  ذمم
                         VendorInfoList.clear();
+                        paymethod=0;
                         VendorInfoList = mydatabase.customers_dao().getAllVendor();
                         fillCustomerspinner(VendorInfoList);
                         Toast.makeText(getApplicationContext(), "Selected button number " + index, 500).show();
                         break;
-                    case 1: // secondbutton
+                    case 1: // secondbutton  نقدا
                         customerInfoList.clear();
                         customerInfoList = mydatabase.customers_dao().getAllCustms();
-
+                        paymethod=1;
                         fillCustomerspinner(customerInfoList);
                         Toast.makeText(getApplicationContext(), "Selected button number " + index, 500).show();
                         break;
                 }
             }
         });
+        final RadioGroup voch_typeradio = (RadioGroup) findViewById(R.id.radioGroup);
+        voch_typeradio.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                View radioButton = voch_typeradio.findViewById(checkedId);
+                int index = voch_typeradio.indexOfChild(radioButton);
+
+                // Add logic here
+
+                switch (index) {
+                    case 0: // first button  ذمم
+                        VochType=505;
+                        break;
+                    case 1: // secondbutton  نقدا
+                        VochType=504;
+
+
+                        break;
+                }
+            }
+        });
         radioGroup=findViewById(R.id.radioGroup);
         exportData = new ExportData(MainActivity.this);
         generalMethod=new GeneralMethod(MainActivity.this);
@@ -199,6 +232,13 @@ TextView menu;
         itemRec.setLayoutManager( new LinearLayoutManager(MainActivity.this));
         mydatabase=AppDatabase.getInstanceDatabase(MainActivity.this);
         itemname=findViewById(R.id.item_name);
+        search=findViewById(R.id.search);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                opensearchDailog();
+            }
+        });
         itemcode=findViewById(R.id.item_code);
         itemqty=findViewById(R.id.qty);
         itemprice=findViewById(R.id.price);
@@ -675,22 +715,12 @@ void addItem(String itemno){
         Log.e("vocher_ItemsSize==",vocher_Items.size()+"");
         for (int i = 0; i < vocher_Items.size(); i++) {
             ReceiptDetails ordersDetails = new ReceiptDetails();
-            if(order.isChecked()) {
-                ordersDetails.setVOUCHERTYPE(505);
 
-            }
-            else {
-                ordersDetails.setVOUCHERTYPE(504);
+                ordersDetails.setVOUCHERTYPE(VochType);
 
-            }
-            if(cash.isChecked()) {
-                ordersDetails.setPaymethod(1);
+                ordersDetails.setPaymethod(paymethod);
 
-            }
-            else {
-                ordersDetails.setVOUCHERTYPE(2);
 
-            }
             ordersDetails.setDiscount(vocher_Items.get(i).getDiscount());
             ordersDetails.setItemNo(vocher_Items.get(i).getITEMNO());
             ordersDetails.setFree(vocher_Items.get(i).getFree());
@@ -775,21 +805,17 @@ void addItem(String itemno){
         ReceiptMaster orderMaster = new ReceiptMaster();
         orderMaster.setIsPosted(0);
 
-        if(cash.isChecked()) {
-            orderMaster.setPaymethod(1);
 
-        }
-        else {
+            orderMaster.setPaymethod(paymethod);
             orderMaster.setVOUCHERTYPE(2);
 
-        }
+
 
         orderMaster.setUserNo(Login.salmanNumber);
         orderMaster. setDiscounttype(distype);
-        if(order.isChecked())
-        orderMaster.setVOUCHERTYPE(505);
-        else
-            orderMaster.setVOUCHERTYPE(504);
+
+        orderMaster.setVOUCHERTYPE(VochType);
+
         orderMaster.setDate(generalMethod.getCurentTimeDate(1));
         orderMaster.setTime(generalMethod.getCurentTimeDate(2));
         // orderMaster.setCustomerId();
@@ -856,7 +882,7 @@ void addItem(String itemno){
      orderno =Integer.parseInt(sharedPref.getString(Login.max_Order_PREF, "")) ;
             Log.e("vohno===",vohno+"");
             // vohno =Integer.parseInt(vohno) ;
-
+// save Vocher Num for order and vocher
      if(orderMaster.getVOUCHERTYPE()==504)
      {   orderMaster.setVhfNo(vohno);
             mydatabase.receiptMaster_dao().insertOrder(orderMaster);
@@ -865,6 +891,8 @@ void addItem(String itemno){
                 ordersDetailslist.get(l).setVhfNo(vohno);
                 mydatabase.receiptDetails_dao().insertOrder(ordersDetailslist.get(l));
             }
+
+         UpdateMaxVo(1);
         }
 
         else
@@ -876,20 +904,23 @@ void addItem(String itemno){
                 mydatabase.receiptDetails_dao().insertOrder(ordersDetailslist.get(l));
             }
 
-        }
+            UpdateMaxVo(2); }
 
         ordersDetailslist.clear();
         vocher_Items.clear();
-        UpdateMaxVo();
+
 
         fillAdapter();
 
     }
-    void   UpdateMaxVo(){
+    void   UpdateMaxVo(int flage){
 
         SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE).edit();
         Log.e("vohno==",vohno+"");
-        editor.putString(Login.maxVoch_PREF,String.valueOf(++vohno) );
+    if(flage==1)    editor.putString(Login.maxVoch_PREF,String.valueOf(++vohno) );
+    else
+
+        editor.putString(Login.max_Order_PREF,String.valueOf(++orderno) );
         editor.apply();
     }
 
@@ -1284,6 +1315,249 @@ void addTotalDisDailog(){
             return false;
         }
     };
+
+
+    private void opensearchDailog() {
+        AllItemstest.clear();
+        dialog1 = new Dialog(MainActivity.this);
+        dialog1.setCancelable(true);
+        dialog1.setContentView(R.layout.searchdailog);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog1.getWindow().getAttributes());
+        lp.width = 500;
+        lp.height = 700;
+        lp.gravity = Gravity.CENTER;
+        dialog1.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog1.show();
+        Log.e("size", AllItemDBlist.size() + "");
+        final ListView listView = dialog1.findViewById(R.id.Rec);
+        final EditText search = dialog1.findViewById(R.id.search);
+        final Spinner categorySpinner = dialog1.findViewById(R.id.categorySpinner);
+        final Spinner kindSpinner = dialog1.findViewById(R.id.kindSpinner);
+
+        List<String> categories = new ArrayList<>();
+        List<String> kinds = new ArrayList<>();
+
+        categories.add(0, getString(R.string.category));
+        kinds.add(0, getString(R.string.kind));
+
+        for (int i = 0; i < AllItemDBlist.size(); i++) {
+
+            if (AllItemDBlist.get(i).getCATEOGRYID() != null && AllItemDBlist.get(i).getItemK() != null) {
+
+                if (!categories.contains(AllItemDBlist.get(i).getCATEOGRYID()) && !AllItemDBlist.get(i).getCATEOGRYID().equals(""))
+                    categories.add(AllItemDBlist.get(i).getCATEOGRYID());
+
+                if (!kinds.contains(AllItemDBlist.get(i).getItemK()) && !AllItemDBlist.get(i).getItemK().equals(""))
+                    kinds.add(AllItemDBlist.get(i).getItemK());
+
+            }
+
+        }
+
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_dropdown_item_1line, categories);
+        categorySpinner.setAdapter(categoryAdapter);
+        categorySpinner.setSelection(0);
+
+        ArrayAdapter<String> kindAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_dropdown_item_1line, kinds);
+        kindSpinner.setAdapter(kindAdapter);
+        kindSpinner.setSelection(0);
+
+        Adapter adapter1 = new Adapter(this, AllItemDBlist);
+        listView.setAdapter(adapter1);
+
+//        search.setOnTouchListener(new View.OnTouchListener() {
+//            @SuppressLint("ClickableViewAccessibility")
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                final int DRAWABLE_START = 0;
+//                final int DRAWABLE_TOP = 1;
+//                final int DRAWABLE_END = 2;
+//                final int DRAWABLE_BOTTOM = 3;
+//
+//                if (event.getAction() == MotionEvent.ACTION_UP) {
+//                    int end = v.getResources().getConfiguration().getLayoutDirection() == LAYOUT_DIRECTION_RTL ? search.getLeft() : search.getRight();
+//
+//                    if (event.getRawX() >= (end - search.getCompoundDrawables()[DRAWABLE_END].getBounds().width())) {
+//
+//                        search.setText("");
+//
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//        });
+
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                if (categorySpinner.getSelectedItemPosition() == 0 && kindSpinner.getSelectedItemPosition() == 0 && editable.toString().trim().equals("")) {
+
+                    Adapter adapter1 = new Adapter(MainActivity.this, AllItemDBlist);
+                    listView.setAdapter(adapter1);
+
+                } else {
+
+                    searchItems(categorySpinner.getSelectedItemPosition(), categorySpinner.getSelectedItem().toString(),
+                            kindSpinner.getSelectedItemPosition(), kindSpinner.getSelectedItem().toString(),
+                            editable.toString());
+
+                    Adapter adapter2 = new Adapter(MainActivity.this, AllItemstest);
+                    listView.setAdapter(adapter2);
+
+                }
+
+            }
+        });
+
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (categorySpinner.getSelectedItemPosition() == 0 && kindSpinner.getSelectedItemPosition() == 0 && search.getText().toString().trim().equals("")) {
+
+                    Adapter adapter1 = new Adapter(MainActivity.this, AllItemDBlist);
+                    listView.setAdapter(adapter1);
+
+                } else {
+
+                    searchItems(position, categorySpinner.getSelectedItem().toString(),
+                            kindSpinner.getSelectedItemPosition(), kindSpinner.getSelectedItem().toString(),
+                            search.getText().toString());
+
+                    Adapter adapter1 = new Adapter(MainActivity.this, AllItemstest);
+                    listView.setAdapter(adapter1);
+
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+
+            }
+        });
+
+        kindSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (categorySpinner.getSelectedItemPosition() == 0 && kindSpinner.getSelectedItemPosition() == 0 && search.getText().toString().trim().equals("")) {
+
+                    Adapter adapter1 = new Adapter(MainActivity.this, AllItemDBlist);
+                    listView.setAdapter(adapter1);
+
+                } else {
+
+                    searchItems(categorySpinner.getSelectedItemPosition(), categorySpinner.getSelectedItem().toString(),
+                            position, kindSpinner.getSelectedItem().toString(),
+                            search.getText().toString());
+
+                    Adapter adapter1 = new Adapter(MainActivity.this, AllItemstest);
+                    listView.setAdapter(adapter1);
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+    }
+    private void searchItems(int catPosition, String category, int kindPos, String kind, String search) {
+
+        AllItemstest.clear();
+
+        if (catPosition != 0) {
+
+            for (int i = 0; i < AllItemDBlist.size(); i++) {
+
+                if (AllItemDBlist.get(i).getCATEOGRYID().equals(category)) {
+
+                    if (kindPos == 0 && search.trim().equals("")) {
+
+                        AllItemstest.add(AllItemDBlist.get(i));
+
+                    } else if (kindPos != 0 && search.trim().equals("")) {
+
+                        if (AllItemDBlist.get(i).getItemK().equals(kind))
+                            AllItemstest.add(AllItemDBlist.get(i));
+
+                    } else if (kindPos == 0 && !search.trim().equals("")) {
+
+                        if (AllItemDBlist.get(i).getNAME().toLowerCase().trim().contains(search.trim().toLowerCase()) ||
+                                AllItemDBlist.get(i).getITEMNO().trim().contains(search.trim()))
+                            AllItemstest.add(AllItemDBlist.get(i));
+
+                    } else if (kindPos != 0 && !search.trim().equals("")) {
+
+                        if (AllItemDBlist.get(i).getItemK().equals(kind) && (
+                                AllItemDBlist.get(i).getNAME().toLowerCase().trim().contains(search.trim().toLowerCase()) ||
+                                        AllItemDBlist.get(i).getITEMNO().trim().contains(search.trim())))
+                            AllItemstest.add(AllItemDBlist.get(i));
+
+                    }
+
+                }
+
+            }
+
+        } else {
+
+            if (kindPos == 0 && search.trim().equals("")) {
+
+                AllItemstest = AllItemDBlist;
+
+
+            } else {
+
+                for (int i = 0; i < AllItemDBlist.size(); i++) {
+
+                    if (kindPos != 0 && search.trim().equals("")) {
+
+                        if (AllItemDBlist.get(i).getItemK().equals(kind))
+                            AllItemstest.add(AllItemDBlist.get(i));
+
+                    } else if (kindPos == 0 && !search.trim().equals("")) {
+
+                        if (AllItemDBlist.get(i).getNAME().toLowerCase().trim().contains(search.trim().toLowerCase()) ||
+                                AllItemDBlist.get(i).getITEMNO().trim().contains(search.trim()))
+                            AllItemstest.add(AllItemDBlist.get(i));
+
+                    } else if (kindPos != 0 && !search.trim().equals("")) {
+
+                        if (AllItemDBlist.get(i).getItemK().equals(kind) && (
+                                AllItemDBlist.get(i).getNAME().toLowerCase().trim().contains(search.trim().toLowerCase()) ||
+                                        AllItemDBlist.get(i).getITEMNO().trim().contains(search.trim())))
+                            AllItemstest.add(AllItemDBlist.get(i));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
 
 
 }

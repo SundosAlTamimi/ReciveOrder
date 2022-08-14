@@ -25,6 +25,7 @@
     <string name="cash">Cash</string>
     <string name="cridt">Cridt</string>
     <string name="paymethod">Pay Method</string>
+    <string name="VochType">Voch Type</string>
     <string name="vocher">Vocher</string>
     <string name="confirm_title">Confirm</string>
     <string name="messageExit">Are You Sure To Exit ?</string>
@@ -46,4 +47,9 @@
     <string name="total">Total</string>
     <string name="net_sales">Net Sales</string>
     <string name="vlauoftotaldis">Total Dis Value</string>
+    <string name="search">Search</string>
+    <string name="category">Category</string>
+    <string name="kind">Kind</string>
+
+
 </resources>

@@ -28,10 +28,26 @@
 
                     android:layout_weight="1"
                     android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
 
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="match_parent"
+                  android:layout_weight="2.5"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/edittext_white_border"
+                        android:elevation="2dp"
+                        android:gravity="center"
+                        android:padding="3dp"
+                        android:text="@string/VochType"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="14sp" />
                     <RadioGroup
                         android:layout_width="match_parent"
-                        android:layout_weight="1"
+                  android:layout_weight="1"
                         android:orientation="horizontal"
                         android:id="@+id/radioGroup"
                         android:layout_height="match_parent">
@@ -49,21 +65,28 @@
                             android:checked="true"
                             android:buttonTint="@color/colorPrimaryDark"
                             android:text="@string/vocher"
-                            android:layout_weight="1"
+                            android:layout_weight="1.2"
                             android:layout_height="match_parent"/>
 
                     </RadioGroup>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:layout_weight="9"
+                        android:orientation="horizontal">
                     <TextView
                         android:layout_width="50dp"
                         android:id="@+id/menuBtn"
-                        android:layout_weight=".7"
+                       android:layout_weight="1"
                         android:drawableStart="@drawable/menuimg"
                         android:layout_gravity="start|center"
 
                         android:layout_height="20dp"
 
                         />
-
+                    </LinearLayout>
 
                 </LinearLayout>
                 <LinearLayout
@@ -72,9 +95,16 @@
 
                     android:layout_weight="1"
                     android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_weight="2"
+                        android:layout_weight="2.5"
                         android:layout_height="match_parent"
                         android:background="@drawable/edittext_white_border"
                         android:elevation="2dp"
@@ -95,21 +125,34 @@
                             android:buttonTint="@color/colorPrimaryDark"
                             android:text="@string/cridt"
                             android:layout_weight="1"
-
+                            android:checked="true"
                             android:layout_height="match_parent"/>
                         <androidx.appcompat.widget.AppCompatRadioButton
                             android:layout_width="match_parent"
                             android:id="@+id/cash"
-                            android:checked="true"
+
                             android:buttonTint="@color/colorPrimaryDark"
                             android:text="@string/cash"
-                            android:layout_weight="1"
+                            android:layout_weight="1.2"
                             android:layout_height="match_parent"/>
 
                     </RadioGroup>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
 
+                        android:layout_weight="9"
+                        android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="50dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="start|center"
+                         android:visibility="invisible"
+                        android:layout_height="20dp"
 
-
+                        />
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -176,7 +219,12 @@ android:layout_margin="1dp"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         />
-
+<TextView
+    android:layout_width="30dp"
+    android:layout_height="match_parent"
+    android:id="@+id/search"
+    android:drawableTint="@color/colorPrimary"
+    android:background="@drawable/ic_baseline_search_24"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -209,8 +257,13 @@ android:layout_margin="1dp"
                         android:padding="3dp"
                         android:gravity="center"
                         android:textColor="@color/black"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
+                    <TextView
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                      android:visibility="invisible"
 
+                      />
 
                 </LinearLayout>
                 <LinearLayout
@@ -250,7 +303,12 @@ android:layout_margin="1dp"
                         android:textSize="14sp"
                         />
 
+                    <TextView
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                        android:visibility="invisible"
 
+                        />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -284,7 +342,12 @@ android:layout_margin="1dp"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         />
+                    <TextView
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                        android:visibility="invisible"
 
+                        />
                 </LinearLayout>
 
                 <LinearLayout
@@ -333,7 +396,7 @@ android:layout_margin="1dp"
         android:id="@+id/HorizontalScroll"
 
         android:orientation="vertical"
-        android:layout_weight="1"
+        android:layout_weight="1.1"
         android:fillViewport="true"
         android:layout_height="match_parent">
             <LinearLayout
@@ -341,7 +404,7 @@ android:layout_margin="1dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
-                android:layout_weight="1"
+                android:layout_weight="1.1"
 
 
                 android:orientation="vertical"
@@ -491,7 +554,7 @@ android:layout_margin="1dp"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:gravity="center"
-        android:layout_weight="1.65"
+        android:layout_weight="1.7"
         android:layout_gravity="center">
                    <TextView
                 android:layout_height="match_parent"
@@ -557,7 +620,7 @@ android:layout_margin="1dp"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:gravity="center"
-                android:layout_weight="1.62"
+                android:layout_weight="1.69"
                 android:layout_gravity="center">
 
 

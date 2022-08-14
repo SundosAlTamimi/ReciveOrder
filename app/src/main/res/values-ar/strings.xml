@@ -7,7 +7,8 @@
     <string name="Login">تسجيل دخول</string>
     <string name="OpenSetting">الإعدادات</string>
     <string name="required">*مطلوب</string>
-
+    <string name="importdata">استيراد البيانات</string>
+    <string name="exportdata">تصدير البيانات</string>
     <string name="item_Name_">اسم المادة</string>
     <string name="item_code_">رقم المادة</string>
     <string name="item_price">السعر</string>
@@ -26,7 +27,7 @@
     <string name="cash">نقدا</string>
     <string name="cridt">ذمم</string>
     <string name="paymethod">طريقة الدفع</string>
-
+    <string name="VochType">نوع الفاتورة</string>
     <string name="vocher">فاتورة</string>
     <string name="confirm_title">تأكيد</string>
     <string name="messageExit">هل تريد الخروج؟</string>
@@ -45,4 +46,7 @@
     <string name="total">الإجمالي</string>
     <string name="net_sales">الصافي</string>
     <string name="vlauoftotaldis">إجمالي الخصم الكلي</string>
+    <string name="search">بحث</string>
+    <string name="category">القسم</string>
+    <string name="kind">النوع</string>
 </resources>
