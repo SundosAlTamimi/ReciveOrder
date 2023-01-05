@@ -8,7 +8,11 @@
     tools:context=".Acitvits.MainActivity">
 
 
-
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    android:id="@+id/desRespon"/>
 
             <LinearLayout
                 android:id="@+id/linearmain"
@@ -403,10 +407,7 @@ android:layout_margin="1dp"
                 android:id="@+id/total_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
                 android:layout_weight="1.1"
-
-
                 android:orientation="vertical"
                 >
 
@@ -416,7 +417,7 @@ android:layout_margin="1dp"
                     android:layout_height="match_parent"
                     android:layout_weight="7"
                     android:background="@drawable/edittext_white_border"
-                    android:padding="3dp">
+                    android:padding="1dp">
                     <TextView
                         android:text="@string/item_Name_"
                         android:layout_width="100dp"
@@ -488,6 +489,7 @@ android:layout_margin="1dp"
 
                         android:textSize="15sp"
                         />
+
                     <TextView
 
                         android:layout_width="2dp"
@@ -509,6 +511,16 @@ android:layout_margin="1dp"
                         android:textSize="15sp"
                         />
                     <TextView
+
+                        android:layout_width="2dp"
+
+                        android:gravity="center"
+
+                        android:layout_height="match_parent"
+
+                        android:background="@color/colorPrimaryDark"
+                        />
+                    <TextView
                         android:text="@string/item_price"
                         android:layout_width="100dp"
                         android:layout_weight="1.2"
@@ -517,6 +529,16 @@ android:layout_margin="1dp"
                         android:textColor="@color/colorPrimaryDark"
 
                         android:textSize="15sp"
+                        />
+                    <TextView
+
+                        android:layout_width="2dp"
+
+                        android:gravity="center"
+
+                        android:layout_height="match_parent"
+
+                        android:background="@color/colorPrimaryDark"
                         />
                     <TextView
                         android:text="@string/total"
@@ -528,6 +550,12 @@ android:layout_margin="1dp"
 
                         android:textSize="15sp"
                         />
+                    <TextView
+
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+
+                        android:gravity="center" />
                 </TableRow>
 
                 <LinearLayout

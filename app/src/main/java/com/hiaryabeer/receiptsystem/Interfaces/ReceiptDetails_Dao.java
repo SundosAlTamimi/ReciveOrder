@@ -7,6 +7,7 @@ import androidx.room.Query;
 
 
 import com.hiaryabeer.receiptsystem.models.ReceiptDetails;
+import com.hiaryabeer.receiptsystem.models.ReceiptMaster;
 
 import java.util.List;
 
@@ -32,4 +33,11 @@ public interface ReceiptDetails_Dao {
 
     @Query("delete from ReceiptDetails_Table where VHFNO= :vohno")
     int deleteOrderByVOHNO(int vohno);
+
+    @Query("SELECT * FROM ReceiptDetails_Table Where VHFNO= :VHFNO")
+    List<ReceiptDetails> getOrdersByNumber(long VHFNO );
+
+    @Query("select * from ReceiptDetails_Table where TransNo= :Tranno and VHFNO= :vohno")
+    List<ReceiptDetails> getOrderByTransNo(long vohno,long Tranno);
+
 }

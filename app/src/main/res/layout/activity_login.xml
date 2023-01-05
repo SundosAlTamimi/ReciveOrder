@@ -66,6 +66,7 @@
             android:drawablePadding="20dp"
             android:drawableRight="@drawable/ic_baseline_lock_24"
             android:hint="******"
+            android:inputType="textPassword"
             android:maxLines="1"
             android:id="@+id/passEdt"
             android:layout_width="match_parent"
@@ -133,4 +134,12 @@
             />
 
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:text=" V. 19"
+        android:gravity="center_vertical|bottom"
+        android:textColor="@color/purple_500"
+        android:textSize="17sp" />
 </RelativeLayout>

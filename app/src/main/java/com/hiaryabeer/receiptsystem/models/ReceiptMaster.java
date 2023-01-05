@@ -13,7 +13,7 @@ import org.json.JSONObject;
 public class ReceiptMaster {
     @PrimaryKey
     @ColumnInfo(name = "VHFNO")
-    private int vhfNo;
+    private long vhfNo;
     @ColumnInfo(name = "VOUCHERTYPE")
     private int  VOUCHERTYPE;
     @ColumnInfo(name = "Date")
@@ -22,7 +22,8 @@ public class ReceiptMaster {
     @ColumnInfo(name = "Time")
     private String time;
 
-
+    @ColumnInfo(name = "TransNo")
+    private String TransNo;
 
 
     @ColumnInfo(name = "Tax")
@@ -34,7 +35,7 @@ public class ReceiptMaster {
 
 
     @ColumnInfo(name = "Customer_ID")
-    private int customerId;
+    private String customerId;
 
     @ColumnInfo(name = "IS_Posted", defaultValue = "0")
     private int isPosted;
@@ -61,6 +62,18 @@ public class ReceiptMaster {
     @ColumnInfo(name = "Paymethod")
     private int Paymethod;
 
+
+    @ColumnInfo(name = "Cust_Name")
+    private String Cust_Name;
+
+    public String getCust_Name() {
+        return Cust_Name;
+    }
+
+    public void setCust_Name(String cust_Name) {
+        Cust_Name = cust_Name;
+    }
+
     public int getPaymethod() {
         return Paymethod;
     }
@@ -77,6 +90,14 @@ public class ReceiptMaster {
 
     public void setVoucherDiscountvalue(double voucherDiscountvalue) {
         this.voucherDiscountvalue = voucherDiscountvalue;
+    }
+
+    public String getTransNo() {
+        return TransNo;
+    }
+
+    public void setTransNo(String transNo) {
+        TransNo = transNo;
     }
 
     @ColumnInfo(name = "Discounttype")//1 for perc and 0 for valu
@@ -97,11 +118,12 @@ public class ReceiptMaster {
     public void setConfirmState(int confirmState) {
         ConfirmState = confirmState;
     }
-    public int getVhfNo() {
+
+    public long getVhfNo() {
         return vhfNo;
     }
 
-    public void setVhfNo(int vhfNo) {
+    public void setVhfNo(long vhfNo) {
         this.vhfNo = vhfNo;
     }
 
@@ -139,11 +161,11 @@ public class ReceiptMaster {
         TotalQty = totalQty;
     }
 
-    public int getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
@@ -215,20 +237,20 @@ public class ReceiptMaster {
             obj.put("VOUCHERTYPE", VOUCHERTYPE);
 
             obj.put("VOUCHERDATE", date);
-            obj.put("SALESMANNO", UserNo);
+            obj.put("SALESMANNO", "1");
             obj.put("VOUCHERDISCOUNT", voucherDiscountvalue);
             obj.put("VOUCHERDISCOUNTPERCENT", voucherDiscountPerc);
 
-            obj.put("NOTES", "");
+            obj.put("NOTES", UserNo);
 
 
-            obj.put("CACR", 1);
+            obj.put("CACR", Paymethod);
             obj.put("ISPOSTED", "0");
             obj.put("NETSALES", NetTotal);
             obj.put("CUSTOMERNO", customerId);
-            obj.put("VOUCHERYEAR", 2022);
+            obj.put("VOUCHERYEAR", 2023);
 
-            obj.put("PAYMETHOD", "1");
+            obj.put("PAYMETHOD", Paymethod);
 
 
         } catch (JSONException e) {

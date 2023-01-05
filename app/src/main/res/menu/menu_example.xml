@@ -14,4 +14,7 @@
     <item android:id="@+id/addTotaldis"
         android:title="@string/addTotaldis"
         />
+    <item android:id="@+id/Report"
+        android:title="@string/VochersReport"
+        />
 </menu>

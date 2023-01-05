@@ -8,6 +8,7 @@ import androidx.room.Query;
 
 import com.hiaryabeer.receiptsystem.models.ReceiptMaster;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -40,13 +41,21 @@ public interface ReceiptMaster_Dao {
 
 
 
-    @Query("SELECT VHFNO FROM ReceiptMaster_Table where VHFNO= (SELECT MAX(VHFNO) FROM ReceiptMaster_Table) and VOUCHERTYPE=504")
+    @Query("SELECT MAX(VHFNO) FROM ReceiptMaster_Table WHERE VOUCHERTYPE=504")
     int getLastVoherNo ( );
-    @Query("SELECT VHFNO FROM ReceiptMaster_Table where VHFNO= (SELECT MAX(VHFNO) FROM ReceiptMaster_Table) and VOUCHERTYPE=505")
+    @Query("SELECT MAX(VHFNO) FROM ReceiptMaster_Table WHERE VOUCHERTYPE=505")
     int getLastorderNo ( );
     @Query("delete from ReceiptMaster_Table where VHFNO= :vohno")
-    int deleteOrderByVOHNO(int vohno);
+    int deleteOrderByVOHNO(long vohno);
 
 
+    @Query("SELECT * FROM ReceiptMaster_Table")
+    List<ReceiptMaster> getAllOrders();
+    @Query("select * from ReceiptMaster_Table where VHFNO= :vohno")
+    ReceiptMaster getOrderByVOHNO(long vohno);
+    @Query("select * from ReceiptMaster_Table where TransNo= :vohno")
+    ReceiptMaster getOrderByTransNo(long vohno);
+   @Query("select DISTINCT Cust_Name from ReceiptMaster_Table")
+ List<String>   getCustomers();
 
 }

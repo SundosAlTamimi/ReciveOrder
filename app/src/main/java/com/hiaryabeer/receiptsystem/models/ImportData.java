@@ -38,10 +38,11 @@ import static com.hiaryabeer.receiptsystem.Acitvits.Login.SETTINGS_PREFERENCES;
 
 public class ImportData {
    public static List<Items> AllImportItemlist = new ArrayList<>();
+   public static ArrayList<ItemSwitch> listAllItemSwitch = new ArrayList<>();
    ApiService apiService;
    private static Context context;
    public String ipAddress = "", CONO = "",ipPort="", headerDll = "", link = "";
-   public static SweetAlertDialog pditem,pDialog,pDialog2, pDialog3, pDialog4;;
+   public static SweetAlertDialog pditem,pDialog,pDialog2, pDialog3, pDialog4,pDialog5;
 AppDatabase my_dataBase;
    SharedPreferences sharedPref;
    private void getIpAddress() {
@@ -303,6 +304,13 @@ AppDatabase my_dataBase;
       void onError(String error);
 
    }
+   public interface GetItemsBalanceCallBack {
+
+      void onResponse( JSONObject response);
+
+      void onError(String error);
+
+   }
    public interface GetVendorCallBack {
 
       void onResponse(JSONArray response);
@@ -329,7 +337,7 @@ AppDatabase my_dataBase;
 
             getUsersCallBack.onResponse(response);
             pDialog3.dismissWithAnimation();
-            GeneralMethod.showSweetDialog(context, 1, "Data Saved", null);
+          //  GeneralMethod.showSweetDialog(context, 1, "Data Saved", null);
             Log.e("getUsers_Response", response + "");
 
          }
@@ -366,6 +374,64 @@ AppDatabase my_dataBase;
       RequestQueueSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(jsonArrayRequest);
 
    }
+   public void getItemsBalance(GetItemsBalanceCallBack getItemsCallBack) {
+
+      pDialog5 = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+
+      pDialog5.getProgressHelper().setBarColor(Color.parseColor("#115571"));
+      pDialog5.setTitleText("Loading Items Balance");
+      pDialog5.setCancelable(false);
+      pDialog5.show();
+      //http://10.0.0.22:8085/GetVanAllData?STRNO=1&CONO=295
+      if (!ipAddress.equals("") || !CONO.equals(""))
+         link = "http://" + ipAddress +  headerDll + "/GetVanAllData?STRNO=1&CONO=" + CONO;
+
+      Log.e("gettemsBalance_Link", link);
+
+      JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(link, new com.android.volley.Response.Listener<JSONObject>() {
+
+         @Override
+         public void onResponse(JSONObject response) {
+
+            getItemsCallBack.onResponse(response);
+            pDialog5.dismissWithAnimation();
+            GeneralMethod.showSweetDialog(context, 1, "Data Saved", null);
+            Log.e("getItemsBalance_Response", response + "");
+
+         }
+      }, new com.android.volley.Response.ErrorListener() {
+         @Override
+         public void onErrorResponse(VolleyError error) {
+
+            getItemsCallBack.onError(error.getMessage() + "");
+            pDialog5.dismissWithAnimation();
+            if ((error.getMessage() + "").contains("SSLHandshakeException") || (error.getMessage() + "").equals("null")) {
+
+               GeneralMethod.showSweetDialog(context, 0, null, "Connection to server failed");
+
+            } else if ((error.getMessage() + "").contains("ConnectException")) {
+
+               GeneralMethod.showSweetDialog(context, 0, "Connection Failed", null);
+
+            } else if ((error.getMessage() + "").contains("NoRouteToHostException")) {
+
+               GeneralMethod.showSweetDialog(context, 3, "", "Please check the entered IP info");
+
+            } else if ((error.getMessage() + "").contains("No Data Found")) {
+
+               GeneralMethod.showSweetDialog(context, 3, "", "No Items Found");
+
+            }
+            Log.e("getItems_Error", error.getMessage() + "");
+
+         }
+      });
+
+      jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(30 * 1000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+      RequestQueueSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+
+   }
+
    public void getAllVendor(GetUsersCallBack GetVendorCallBack, String ipAddress, String ipPort, String coNo) {
 
       pDialog4 = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
@@ -375,7 +441,7 @@ AppDatabase my_dataBase;
       pDialog4.setCancelable(false);
       pDialog4.show();
       if (!ipAddress.equals("")  || !coNo.equals(""))
-         link = "http://" + ipAddress + headerDll.trim() + "/GetVendorAll";
+         link = "http://" + ipAddress + headerDll.trim() + "/GetVendorAll?CONO=" + coNo;
 
       Log.e("getAllVendor", link);
 
@@ -385,7 +451,7 @@ AppDatabase my_dataBase;
 
             GetVendorCallBack.onResponse(response);
             pDialog4.dismissWithAnimation();
-            GeneralMethod.showSweetDialog(context, 1, "Data Saved", null);
+
             Log.e("getAllVendor", response + "");
 
          }
@@ -422,4 +488,40 @@ AppDatabase my_dataBase;
       RequestQueueSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(jsonArrayRequest);
 
    }
+   public void fetchItemSwitchData(String from,String to) {
+      listAllItemSwitch.clear();
+      Call<List<ItemSwitch>> myData = apiService.gatItemSwitchDetail(from, to,CONO);
+
+      myData.enqueue(new Callback<List<ItemSwitch>>() {
+
+         @Override
+         public void onResponse(Call<List<ItemSwitch>> call, retrofit2.Response<List<ItemSwitch>> response) {
+
+            if (!response.isSuccessful()) {
+
+               Log.e("fetchItemDetailDataonResponse", "not=" + response.message());
+
+
+
+            } else {
+               Log.e("fetchItemDetailDataonResponse", "onResponse=" + response.message());
+
+
+               listAllItemSwitch.addAll(response.body());
+
+               my_dataBase.itemSwitchDao().dELETEAll();
+               my_dataBase.itemSwitchDao().insertAll(listAllItemSwitch);
+               Log.e("listAllItemSwitch", "SIZE=" + listAllItemSwitch.size());
+
+            }
+         }
+
+         @Override
+         public void onFailure(Call<List<ItemSwitch>> call, Throwable t) {
+            Log.e("fetchItemDetailDataonFailure", "=" + t.getMessage());
+
+         }
+      });
+   }
+
 }

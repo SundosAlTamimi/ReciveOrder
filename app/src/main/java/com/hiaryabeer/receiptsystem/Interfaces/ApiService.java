@@ -1,6 +1,9 @@
 package com.hiaryabeer.receiptsystem.Interfaces;
 
+import com.hiaryabeer.receiptsystem.models.ItemSwitch;
 import com.hiaryabeer.receiptsystem.models.Items;
+import com.hiaryabeer.receiptsystem.models.POitems;
+import com.hiaryabeer.receiptsystem.models.PoInfo;
 import com.hiaryabeer.receiptsystem.models.ReceiptDetails;
 import com.hiaryabeer.receiptsystem.models.ReceiptMaster;
 
@@ -22,11 +25,21 @@ public interface ApiService {
 
 
 
+ @GET("GetJRDItemSwich")
+ Call<List<ItemSwitch>> gatItemSwitchDetail(@Query("FROM_DATE") String FROM_DATE, @Query("TO_DATE") String TO_DATE  , @Query("CONO") String ComNo);
 
 
  @POST("ExportSALES_VOUCHER_D")
  Call<ResponseBody> saveReceiptDetail(ArrayList<ReceiptDetails> ArrayList);
  @POST("ExportSALES_VOUCHER_M")
  Call<ResponseBody> saveReceiptMaster( ArrayList<ReceiptMaster> ArrayList);
+
+ @GET("GetOfferHeader")
+ Call<List<PoInfo>> GetPoInfo(@Query("CONO") String ComNo, @Query("VHFNO") String VHFNO  );
+
+ @GET("GetOfferTransActn")
+ Call<List<POitems>> GetPoItems(@Query("CONO") String ComNo, @Query("VHFNO") String VHFNO  );
+
+
 
 }

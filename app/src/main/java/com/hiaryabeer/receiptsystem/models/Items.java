@@ -45,6 +45,47 @@ public class Items{
   private double Free;
   @ColumnInfo(name = "Item_Discount",defaultValue = "0")
   double Discount;
+  @ColumnInfo(name = "AviQty",defaultValue = "0")
+  double AviQty;
+  @ColumnInfo(name = "BalanceQty",defaultValue = "0")
+  double BalanceQty;
+  @ColumnInfo(name = "ItemNCode")
+  String ItemNCode;
+
+  @ColumnInfo(name = "ConvRate")
+  String ConvRate;
+
+  public String getConvRate() {
+    return ConvRate;
+  }
+
+  public void setConvRate(String convRate) {
+    ConvRate = convRate;
+  }
+
+  public String getItemNCode() {
+    return ItemNCode;
+  }
+
+  public void setItemNCode(String itemNCode) {
+    ItemNCode = itemNCode;
+  }
+
+  public double getBalanceQty() {
+    return BalanceQty;
+  }
+
+  public void setBalanceQty(double balanceQty) {
+    BalanceQty = balanceQty;
+  }
+
+  public double getAviQty() {
+    return AviQty;
+  }
+
+  public void setAviQty(double aviQty) {
+    AviQty = aviQty;
+  }
 
   public double getDiscount() {
     return Discount;

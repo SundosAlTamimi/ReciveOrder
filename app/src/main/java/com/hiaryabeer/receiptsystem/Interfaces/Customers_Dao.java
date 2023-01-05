@@ -37,9 +37,9 @@ public interface Customers_Dao {
     void deleteCustomer(CustomerInfo customerInfo);
 
     @Query("SELECT Customer_Name FROM Customers_Info where Customer_ID=:id")
-    String getCustmByNumber(int id);
+    String getCustmByNumber(String id);
     @Query("SELECT Customer_Name FROM Customers_Info")
     List< String> getCustmName();
-    @Query("SELECT Customer_ID FROM Customers_Info where Customer_Name=:name")
+        @Query("SELECT Customer_ID FROM Customers_Info where Customer_Name=:name")
     int   getCustmByName(String name);
 }

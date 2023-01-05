@@ -1,7 +1,6 @@
 package com.hiaryabeer.receiptsystem.Adapters;
 
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -18,20 +17,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hiaryabeer.receiptsystem.Acitvits.MainActivity;
+import com.hiaryabeer.receiptsystem.Acitvits.ReceivePO;
 import com.hiaryabeer.receiptsystem.R;
 import com.hiaryabeer.receiptsystem.models.AppDatabase;
 import com.hiaryabeer.receiptsystem.models.GeneralMethod;
 import com.hiaryabeer.receiptsystem.models.Items;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder>{
+public class ItemsAdapterNew extends RecyclerView.Adapter<ItemsAdapterNew.ViewHolder>{
 ArrayList<Items>itemsList=new ArrayList<>();
 Context context;
 AppDatabase appDatabase;
    private int index = 0;
    public static  TextView qtyinvalidrespon;
-   public ItemsAdapter(ArrayList<Items> itemsList, Context context) {
+   String currentqty="";
+   public ItemsAdapterNew(ArrayList<Items> itemsList, Context context) {
       this.itemsList = itemsList;
       this.context = context;
       appDatabase=AppDatabase.getInstanceDatabase(context);
@@ -81,7 +83,7 @@ AppDatabase appDatabase;
                   Log.e("removeItemposition", holder.getAdapterPosition() + "");
                   itemsList.remove(holder.getAdapterPosition());
                   notifyDataSetChanged();
-                  MainActivity.desRespon.setText("aa");
+                  ReceivePO.desRespon.setText("aa");
                   dialog.dismiss();
 
                }
@@ -118,63 +120,49 @@ AppDatabase appDatabase;
                      Log.e("itemsList===",itemsList.size()+"");
                      Log.e("case1","case1");
 
-                     if(MainActivity.VochType==504) {
-                        Log.e("case1.1","case1.1 ,itembalnce="+itemsList.get(holder.getAdapterPosition()) .getAviQty());
+                     Log.e("case1.2","case1.2");
 
-                        if (itemsList.get(holder.getAdapterPosition()) .getBalanceQty()>= Double.parseDouble(holder.qty.getText().toString())) {
-                           MainActivity.vocher_Items.get(holder.getAdapterPosition()).
-                                   setQty(Double.parseDouble(holder.qty.getText().toString()));
+                     if(checkqty(itemsList.get(holder.getAdapterPosition()).getITEMNO(),holder.qty.getText().toString().trim()))
 
-
-                           double TotalDiscVal = MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty() * MainActivity.vocher_Items.get(holder.getAdapterPosition()).getF_D() * MainActivity.vocher_Items.get(holder.getAdapterPosition()).getDiscount();
-                           holder.total.setText(String.valueOf((MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty() * MainActivity.vocher_Items.get(holder.getAdapterPosition()).getF_D()) - TotalDiscVal));
-                           Log.e("case1.1", "total=," + holder.total.getText());
-                           Log.e("case1.1", "qty=," + MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty());
-                           MainActivity.desRespon.setText("aa");
-                           itemsList.get(holder.getAdapterPosition()) .setAviQty( itemsList.get(holder.getAdapterPosition()) .getBalanceQty()- MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty());
-                        }
-                        else {
-                           GeneralMethod.showSweetDialog(context, 0, "",context.getResources().getString(R.string.aviQTY)+" "+itemsList.get(holder.getAdapterPosition()) .getBalanceQty());
-                           MainActivity.vocher_Items.get(holder.getAdapterPosition()).
-                                   setQty(itemsList.get(holder.getAdapterPosition()) .getBalanceQty());
-                           holder.qty.setText(itemsList.get(holder.getAdapterPosition()) .getBalanceQty()+"");
-                           double TotalDiscVal = MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty() * MainActivity.vocher_Items.get(holder.getAdapterPosition()).getF_D() * MainActivity.vocher_Items.get(holder.getAdapterPosition()).getDiscount();
-                           holder.total.setText(String.valueOf((MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty() * MainActivity.vocher_Items.get(holder.getAdapterPosition()).getF_D()) - TotalDiscVal));
-                           Log.e("case1.1", "total=," + holder.total.getText());
-                           Log.e("case1.1", "qty=," + MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty());
-                           MainActivity.desRespon.setText("aa");
-                           itemsList.get(holder.getAdapterPosition()) .setAviQty( itemsList.get(holder.getAdapterPosition()) .getBalanceQty()- MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty());
-
-                        }
-                     }
-                     else
-                     { Log.e("case1.2","case1.2");
-                        MainActivity.vocher_Items.get(holder.getAdapterPosition()).
+                     {
+                        ReceivePO.vocher_Items.get(holder.getAdapterPosition()).
                                 setQty(Double.parseDouble(holder.qty.getText().toString()));
 
                         double TotalDiscVal = itemsList.get(holder.getAdapterPosition()).getQty() * itemsList.get(holder.getAdapterPosition()).getF_D() * itemsList.get(holder.getAdapterPosition()).getDiscount();
                         holder.total.setText(String.valueOf((itemsList.get(holder.getAdapterPosition()).getQty() * itemsList.get(holder.getAdapterPosition()).getF_D()) - TotalDiscVal));
+                        ReceivePO.desRespon.setText("aa");
+                     }else{
+                        GeneralMethod.showSweetDialog(context, 0, "",context.getResources().getString(R.string.aviQTY)+" "+currentqty);
+                        MainActivity.vocher_Items.get(holder.getAdapterPosition()).
+                                setQty(Double.parseDouble(currentqty));
+                        holder.qty.setText(currentqty+"");
+                        double TotalDiscVal = MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty() * MainActivity.vocher_Items.get(holder.getAdapterPosition()).getF_D() * MainActivity.vocher_Items.get(holder.getAdapterPosition()).getDiscount();
+                        holder.total.setText(String.valueOf((MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty() * MainActivity.vocher_Items.get(holder.getAdapterPosition()).getF_D()) - TotalDiscVal));
+                        Log.e("case1.1", "total=," + holder.total.getText());
+                        Log.e("case1.1", "qty=," + MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty());
                         MainActivity.desRespon.setText("aa");
+                        itemsList.get(holder.getAdapterPosition()) .setAviQty( Double.parseDouble(currentqty)- MainActivity.vocher_Items.get(holder.getAdapterPosition()).getQty());
 
                      }
+
                   }
                   else if(Double.parseDouble(holder.qty.getText().toString())<0)
                   {
                      holder.qty.setError("not valid");
-                     MainActivity.vocher_Items.get(holder.getAdapterPosition()).
+                     ReceivePO.vocher_Items.get(holder.getAdapterPosition()).
                              setQty(0);
 
                      double TotalDiscVal = itemsList.get(holder.getAdapterPosition()).getQty() * itemsList.get(holder.getAdapterPosition()).getF_D() * itemsList.get(holder.getAdapterPosition()).getDiscount();
                      holder.total.setText(String.valueOf((itemsList.get(holder.getAdapterPosition()).getQty() * itemsList.get(holder.getAdapterPosition()).getF_D()) - TotalDiscVal));
-                     MainActivity.desRespon.setText("aa");
+                     ReceivePO.desRespon.setText("aa");
                   } else if(Double.parseDouble(holder.qty.getText().toString())==0)
                   {
-                     MainActivity.vocher_Items.get(holder.getAdapterPosition()).
+                     ReceivePO.vocher_Items.get(holder.getAdapterPosition()).
                              setQty(0);
 
                      double TotalDiscVal = itemsList.get(holder.getAdapterPosition()).getQty() * itemsList.get(holder.getAdapterPosition()).getF_D() * itemsList.get(holder.getAdapterPosition()).getDiscount();
                      holder.total.setText(String.valueOf((itemsList.get(holder.getAdapterPosition()).getQty() * itemsList.get(holder.getAdapterPosition()).getF_D()) - TotalDiscVal));
-                     MainActivity.desRespon.setText("aa");
+                     ReceivePO.desRespon.setText("aa");
 
                   }
                }catch (Exception exception){
@@ -185,11 +173,11 @@ AppDatabase appDatabase;
             }else
             {
                Log.e("case1.3","case1.3");
-               MainActivity. vocher_Items.get(holder.getAdapterPosition()).
+               ReceivePO. vocher_Items.get(holder.getAdapterPosition()).
                        setQty(1);
                     double TotalDiscVal=itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D()*itemsList.get(holder.getAdapterPosition()).getDiscount();
                holder. total.setText(String.valueOf( (itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D())-TotalDiscVal));
-               MainActivity.desRespon.setText("aa");
+               ReceivePO.desRespon.setText("aa");
 
 
             }
@@ -211,25 +199,25 @@ AppDatabase appDatabase;
          public void afterTextChanged(Editable editable) {
 
             if(!editable.toString().equals(""))
-            {     MainActivity. vocher_Items.get(holder.getAdapterPosition()).setF_D( Double.parseDouble(holder.price.getText().toString()));
-                     Log.e("f_d===",MainActivity. vocher_Items.get(holder.getAdapterPosition()).getF_D()+"");
+            {     ReceivePO. vocher_Items.get(holder.getAdapterPosition()).setF_D( Double.parseDouble(holder.price.getText().toString()));
+                     Log.e("f_d===",ReceivePO. vocher_Items.get(holder.getAdapterPosition()).getF_D()+"");
                double TotalDiscVal=itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D()*itemsList.get(holder.getAdapterPosition()).getDiscount();
                holder. total.setText(String.valueOf( (itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D())-TotalDiscVal));
-               MainActivity.desRespon.setText("aa");
+               ReceivePO.desRespon.setText("aa");
             }else
             {
-               MainActivity. vocher_Items.get(holder.getAdapterPosition()).
+               ReceivePO. vocher_Items.get(holder.getAdapterPosition()).
                        setF_D( 1);
-               Log.e("f_d===",MainActivity. vocher_Items.get(holder.getAdapterPosition()).getF_D()+"");
+               Log.e("f_d===",ReceivePO. vocher_Items.get(holder.getAdapterPosition()).getF_D()+"");
 
                double TotalDiscVal=itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D()*itemsList.get(holder.getAdapterPosition()).getDiscount();
                holder. total.setText(String.valueOf( (itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D())-TotalDiscVal));
-               MainActivity.desRespon.setText("aa");
+               ReceivePO.desRespon.setText("aa");
             }
          }
       });
      if(!IsExistsInList(itemsList.get(position).getITEMNO())) holder.free.setText("0");
-     else holder.free.setText(MainActivity.vocher_Items.get(index).getFree()+"");
+     else holder.free.setText(ReceivePO.vocher_Items.get(index).getFree()+"");
      try {
         holder.    free.addTextChangedListener(new TextWatcher() {
            @Override
@@ -248,14 +236,14 @@ AppDatabase appDatabase;
               {
 
 
-                         MainActivity.vocher_Items.get(holder.getAdapterPosition()).
+                 ReceivePO.vocher_Items.get(holder.getAdapterPosition()).
                                  setFree(Double.parseDouble(holder.free.getText().toString().trim()));
 
 
 
               }else
               {
-                 MainActivity. vocher_Items.get(holder.getAdapterPosition()).
+                 ReceivePO. vocher_Items.get(holder.getAdapterPosition()).
                          setFree( 0);
 
               }
@@ -268,7 +256,7 @@ AppDatabase appDatabase;
 
       if(!IsExistsInList(itemsList.get(position).getITEMNO())) holder.discount.setText("0");
 
-      else holder.discount.setText(MainActivity.vocher_Items.get(index).getDiscount()+"");
+      else holder.discount.setText(ReceivePO.vocher_Items.get(index).getDiscount()+"");
 
       try {
          holder.    discount.addTextChangedListener(new TextWatcher() {
@@ -286,7 +274,7 @@ AppDatabase appDatabase;
             public void afterTextChanged(Editable editable) {
                if(!editable.toString().equals(""))
                {
-                  MainActivity. vocher_Items.get(holder.getAdapterPosition()).
+                  ReceivePO. vocher_Items.get(holder.getAdapterPosition()).
                           setDiscount ( Double.parseDouble(holder.discount.getText().toString().trim())/100);
                   double TotalDiscVal=itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D()*itemsList.get(holder.getAdapterPosition()).getDiscount();
                   holder. total.setText(String.valueOf( (itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D())-TotalDiscVal));
@@ -294,13 +282,13 @@ AppDatabase appDatabase;
 
                }else
                {
-                  MainActivity. vocher_Items.get(holder.getAdapterPosition()).
+                  ReceivePO. vocher_Items.get(holder.getAdapterPosition()).
                           setDiscount( 0);
                   double TotalDiscVal=itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D()*itemsList.get(holder.getAdapterPosition()).getDiscount();
                   holder. total.setText(String.valueOf( (itemsList.get(holder.getAdapterPosition()).getQty()*itemsList.get(holder.getAdapterPosition()).getF_D())-TotalDiscVal));
 
                }
-               MainActivity.desRespon.setText("aa");   }
+               ReceivePO.desRespon.setText("aa");   }
          });
       }catch (Exception e){
 
@@ -360,8 +348,8 @@ AppDatabase appDatabase;
    boolean IsExistsInList(String ItemOCode) {
        index = 0;
       boolean exists = false;
-      for (int i = 0; i < MainActivity.vocher_Items.size(); i++)
-         if (MainActivity.vocher_Items.get(i).getITEMNO().equals(ItemOCode)) {
+      for (int i = 0; i < ReceivePO.vocher_Items.size(); i++)
+         if (ReceivePO.vocher_Items.get(i).getITEMNO().equals(ItemOCode)) {
             index = i;
             exists = true;
             break;
@@ -370,4 +358,31 @@ AppDatabase appDatabase;
 
       return exists;
    }
+   boolean checkqty(String itemCode,String qty){
+      currentqty="";
+      int index = ReceivePO.POitems.stream()
+                            .map(item -> item.getItemOCode())
+                            .collect(Collectors.toList())
+                            .indexOf(itemCode);
+                    Log.e("index==",index+"");
+      currentqty=ReceivePO.POitems.get(index).getQty();
+      Log.e("currentqty==",currentqty+"");
+               // if(index!=null)
+                   if( Double.parseDouble(ReceivePO.POitems.get(index).getQty())>=Double.parseDouble(qty))
+                    {
+
+
+
+                       return true;
+
+                    }
+                    else
+                    {
+                       return false;
+
+                    }
+
+    //  return false;
+   }
+
 }

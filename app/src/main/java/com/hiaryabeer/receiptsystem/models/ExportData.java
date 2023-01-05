@@ -521,7 +521,7 @@ public class ExportData {
             try {
                 String link = "http://"+ipAddress.trim() + headerDll.trim()+"/SaveVouchers";
                 // Log.e("ipAdress", "ip -->" + ip);
-                String data = "CONO="+CONO.trim()+"&STRNO=" +Login.salmanNumber+"&VHFTYPE="+"1";
+                String data = "CONO="+CONO.trim()+"&STRNO=" +"1"+"&VHFTYPE="+"1";
                 Log.e("tag_link", "ExportData -->" + link);
                 Log.e("tag_data", "ExportData -->" + data);
 
@@ -615,8 +615,8 @@ public class ExportData {
 
             try {
                 //http://10.0.0.22:8085/EXPORTTOSTOCK?CONO=295&STRNO=4
-                String link = "http://"+ipAddress.trim() + headerDll.trim()+"/EXPORTTOSTOCK";
-                String data = "CONO="+CONO.trim()+"&STRNO=" +Login.salmanNumber+"&VHFTYPE="+"1";
+                String link = "http://"+ipAddress.trim() + headerDll.trim()+"/NewEXPORTTOSTOCK";
+                String data = "CONO="+CONO.trim()+"&STRNO=" +"1"+"&VHFTYPE="+"1";
                 Log.e("tag_link", "ExportData -->" + link);Log.e("tag_data", "ExportData -->" + data);
 
 

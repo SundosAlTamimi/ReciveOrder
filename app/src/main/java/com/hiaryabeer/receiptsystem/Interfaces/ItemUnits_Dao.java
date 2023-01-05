@@ -25,4 +25,17 @@ public interface ItemUnits_Dao {
     @Query("SELECT CONVRATE FROM Item_Unit_Details WHERE ITEMNO = :itemNo")
     double getConvRatebyitemnum(String itemNo);
 
+    @Query("SELECT CONVRATE FROM Item_Unit_Details WHERE ITEMNO = :itemNo AND ITEMBARCODE= :Barcode")
+    double getConvRatebyitemnumAndBarcode(String itemNo,String Barcode);
+
+
+
+    @Query("SELECT * FROM Item_Unit_Details WHERE ITEMNO = :itemNo AND UNITID <> ''")
+    List<Item_Unit_Details> getItemUnitsOfItem(String itemNo);
+
+    @Query("SELECT * FROM Item_Unit_Details WHERE ITEMNO = :itemNo AND ITEMBARCODE= :Barcode AND UNITID <> ''")
+    Item_Unit_Details getItemUnitsOfItembybarcode(String itemNo,String Barcode);
+    @Query("SELECT * FROM Item_Unit_Details WHERE ITEMBARCODE= :Barcode")
+    Item_Unit_Details SelectItemUnitsBybarcode(String Barcode);
+
 }

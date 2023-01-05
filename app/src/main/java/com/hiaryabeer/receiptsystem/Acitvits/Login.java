@@ -31,6 +31,7 @@ import com.hiaryabeer.receiptsystem.models.GeneralMethod;
 import com.hiaryabeer.receiptsystem.models.ImportData;
 import com.hiaryabeer.receiptsystem.models.Item_Unit_Details;
 import com.hiaryabeer.receiptsystem.models.Items;
+import com.hiaryabeer.receiptsystem.models.ItemsBalance;
 import com.hiaryabeer.receiptsystem.models.User;
 import com.hiaryabeer.receiptsystem.models.Vendor;
 
@@ -59,7 +60,9 @@ public class Login extends AppCompatActivity {
     public static List<Item_Unit_Details> allUnitDetails=new ArrayList<>();
     public static List<CustomerInfo> allCustomers=new ArrayList<>();
     public static List<CustomerInfo> listAllVendor=new ArrayList<>();
-
+    public static List<ItemsBalance> listAlItemsBalances=new ArrayList<>();
+    long MaxVo;
+    long Maxorder;
     AppDatabase mydatabase;
     EditText unameEdt, passEdt;
     EditText editPassword;
@@ -143,10 +146,10 @@ public class Login extends AppCompatActivity {
         ip_settings_dialog.show();
         editVochNo= ip_settings_dialog.findViewById(R.id.editVochNo);
 
-        int MaxVo= mydatabase.receiptMaster_dao(). getLastVoherNo();
-        int Maxorder= mydatabase.receiptMaster_dao(). getLastorderNo();
+    MaxVo= mydatabase.receiptMaster_dao(). getLastVoherNo();
+    Maxorder= mydatabase.receiptMaster_dao(). getLastorderNo();
 
-
+        Log.e("MaxVo==",MaxVo+""+"Maxorder=="+Maxorder);
 
         editVochNo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,26 +232,51 @@ public class Login extends AppCompatActivity {
                 if(!maxVochEdt.getText().toString().trim().equals(""))
                 {
                     Log.e("MaxVo==",MaxVo+"");
+                    if(!MaxOrderEdt.getText().toString().equals("")) {
+                        if (Long.parseLong(maxVochEdt.getText().toString().trim()) != Long.parseLong(MaxOrderEdt.getText().toString().trim()))
+                            if (Long.parseLong(maxVochEdt.getText().toString().trim()) > MaxVo) {
+                                maxVochEdt.setEnabled(false);
+                                SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE).edit();
+                                editor.putString(maxVoch_PREF, maxVochEdt.getText().toString().trim());
 
-                    if(Integer.parseInt(maxVochEdt.getText().toString().trim())>MaxVo)
+                                editor.apply();
+                            } else {
+                                //  maxVochEdt.setText("");
+                                maxVochEdt.setText(String.valueOf(MaxVo + 1));
+
+                                if (MaxVo != 0)
+                                    GeneralMethod.showSweetDialog(Login.this, 0, "", getResources().getString(R.string.MaxVoMsg1) + " " + MaxVo + getResources().getString(R.string.MaxVoMsg2) + (MaxVo + 1) + "  " + getResources().getString(R.string.MaxVoMsg3));
+                                else
+                                    GeneralMethod.showSweetDialog(Login.this, 0, "", getResources().getString(R.string.MaxVoMsg2) + (MaxVo + 1) + "  " + getResources().getString(R.string.MaxVoMsg3));
+
+                                maxVochEdt.setError("");
+                            }
+                        else {
+                            maxVochEdt.setText(String.valueOf(MaxVo + 1));
+                            maxVochEdt.setError("");
+                            GeneralMethod.showSweetDialog(Login.this, 0, "", getResources().getString(R.string.MaxVoMsg6));
+
+                        }
+                    }else
                     {
-                        maxVochEdt.setEnabled(false);
-                        SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE).edit();
-                        editor.putString(maxVoch_PREF,  maxVochEdt.getText().toString().trim());
+                        if (Long.parseLong(maxVochEdt.getText().toString().trim()) > MaxVo) {
+                            maxVochEdt.setEnabled(false);
+                            SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE).edit();
+                            editor.putString(maxVoch_PREF, maxVochEdt.getText().toString().trim());
 
-                        editor.apply();
+                            editor.apply();
+                        } else {
+                            //  maxVochEdt.setText("");
+                            maxVochEdt.setText(String.valueOf(MaxVo + 1));
+
+                            if (MaxVo != 0)
+                                GeneralMethod.showSweetDialog(Login.this, 0, "", getResources().getString(R.string.MaxVoMsg1) + " " + MaxVo + getResources().getString(R.string.MaxVoMsg2) + (MaxVo + 1) + "  " + getResources().getString(R.string.MaxVoMsg3));
+                            else
+                                GeneralMethod.showSweetDialog(Login.this, 0, "", getResources().getString(R.string.MaxVoMsg2) + (MaxVo + 1) + "  " + getResources().getString(R.string.MaxVoMsg3));
+
+                            maxVochEdt.setError("");
+                        }
                     }
-                    else
-                    {
-                      //  maxVochEdt.setText("");
-                        maxVochEdt.setText(String.valueOf(MaxVo+1));
-                        if(MaxVo!=0)
-                            GeneralMethod.showSweetDialog(Login.this,0,"",getResources().getString(R.string.MaxVoMsg1)+" "+MaxVo+getResources().getString(R.string.MaxVoMsg2)+(MaxVo+1)+"  " +getResources().getString(R.string.MaxVoMsg3));
-                        else   GeneralMethod.showSweetDialog(Login.this,0,"",getResources().getString(R.string.MaxVoMsg2)+(MaxVo+1)+"  " +getResources().getString(R.string.MaxVoMsg3));
-
-                        maxVochEdt.setError("");
-                    }
-
                 }
             }
         });
@@ -257,9 +285,10 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
                 if(!MaxOrderEdt.getText().toString().trim().equals(""))
                 {
-                    Log.e("Maxorder==",Maxorder+"");
-
-                    if(Integer.parseInt(MaxOrderEdt.getText().toString().trim())>Maxorder)
+                    Log.e("MaxVo==",MaxVo+"");
+                    if(!maxVochEdt.getText().toString().equals(""))
+                    {  if(    Long.parseLong(MaxOrderEdt.getText().toString().trim())!=Long.parseLong(maxVochEdt.getText().toString().trim()))
+                    if(Long.parseLong(MaxOrderEdt.getText().toString().trim())>Maxorder)
                     {
                         MaxOrderEdt.setEnabled(false);
                         SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE).edit();
@@ -271,12 +300,41 @@ public class Login extends AppCompatActivity {
                     {
                         //  maxVochEdt.setText("");
                         MaxOrderEdt.setText(String.valueOf(Maxorder+1));
+
                         if(Maxorder!=0)
                             GeneralMethod.showSweetDialog(Login.this,0,"",getResources().getString(R.string.MaxVoMsg1)+" "+Maxorder+getResources().getString(R.string.MaxVoMsg2)+(Maxorder+1)+"  " +getResources().getString(R.string.MaxVoMsg3));
                         else
                             GeneralMethod.showSweetDialog(Login.this,0,"",getResources().getString(R.string.MaxVoMsg2)+(Maxorder+1)+"  " +getResources().getString(R.string.MaxVoMsg3));
 
                         MaxOrderEdt.setError("");
+                    }else {
+                    maxVochEdt.setText(String.valueOf(MaxVo + 1));
+                    maxVochEdt.setError("");
+                    GeneralMethod.showSweetDialog(Login.this, 0, "", getResources().getString(R.string.MaxVoMsg5) );
+
+                }
+                    }else
+                    {
+                        if(Long.parseLong(MaxOrderEdt.getText().toString().trim())>Maxorder)
+                        {
+                            MaxOrderEdt.setEnabled(false);
+                            SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE).edit();
+
+                            editor.putString(max_Order_PREF,  MaxOrderEdt.getText().toString().trim());
+                            editor.apply();
+                        }
+                        else
+                        {
+                            //  maxVochEdt.setText("");
+                            MaxOrderEdt.setText(String.valueOf(Maxorder+1));
+
+                            if(Maxorder!=0)
+                                GeneralMethod.showSweetDialog(Login.this,0,"",getResources().getString(R.string.MaxVoMsg1)+" "+Maxorder+getResources().getString(R.string.MaxVoMsg2)+(Maxorder+1)+"  " +getResources().getString(R.string.MaxVoMsg3));
+                            else
+                                GeneralMethod.showSweetDialog(Login.this,0,"",getResources().getString(R.string.MaxVoMsg2)+(Maxorder+1)+"  " +getResources().getString(R.string.MaxVoMsg3));
+
+                            MaxOrderEdt.setError("");
+                        }
                     }
 
                 }
@@ -391,7 +449,6 @@ public class Login extends AppCompatActivity {
 //            }
 //        });
 
-
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -399,249 +456,276 @@ public class Login extends AppCompatActivity {
                 String ipAddress1 = ipEdt.getText().toString().trim();
                 String port1 = portEdt.getText().toString().trim();
                 String coNo1 = coNoEdt.getText().toString().trim();
-              String maxvo1 =maxVochEdt.getText().toString().trim();
+                String maxvo1 =maxVochEdt.getText().toString().trim();
                 String maxOrder =MaxOrderEdt.getText().toString().trim();
+                if (maxvo1.equals(""))maxvo1="1";
                 if (!ipAddress1.equals("")) {
 
 
 
-                        if (!coNo1.equals(""))
+                    if (!coNo1.equals(""))
+                    {
+                        if (!maxvo1.equals(""))
                         {
-                            if (!maxvo1.equals(""))
-                            {
-                                if (!maxOrder.equals(""))
-                                {
-                            SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE).edit();
-                            editor.putString(IP_PREF, ipAddress1);
-                            editor.putString(PORT_PREF, port1);
-                            editor.putString(CONO_PREF, coNo1);
 
-                            if(!maxOrder.equals(""))
-                                editor.putString(max_Order_PREF, maxOrder);
-                            else
-                                editor.putString(max_Order_PREF, "1");
+                                SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE).edit();
+                                editor.putString(IP_PREF, ipAddress1);
+                                editor.putString(PORT_PREF, port1);
+                                editor.putString(CONO_PREF, coNo1);
 
-                           if(maxvo1.trim().length()!=0)
-                               editor.putString(maxVoch_PREF, maxvo1);
-                           else
-                               editor.putString(maxVoch_PREF, "1");
-                            editor.apply();
+                                if(!maxOrder.equals(""))
+                                    editor.putString(max_Order_PREF, maxOrder);
+                                else
+                                    editor.putString(max_Order_PREF, "1");
 
-                            ipAddress = sharedPref.getString(IP_PREF, "");
-                            ipPort = sharedPref.getString(PORT_PREF, "");
-                            coNo = sharedPref.getString(CONO_PREF, "");
-                            Max_Voch = sharedPref.getString(maxVoch_PREF, "");
-                            Max_Order = sharedPref.getString(max_Order_PREF, "");
-                            ip_settings_dialog.dismiss();
-                          mydatabase.itemsDao().deleteAll();
-                            mydatabase.itemUnitsDao().deleteAll();
-                        mydatabase.customers_dao().deleteAll();
+                                if(maxvo1.trim().length()!=0)
+                                    editor.putString(maxVoch_PREF, maxvo1);
+                                else
+                                    editor.putString(maxVoch_PREF, "1");
+                                editor.apply();
+
+                                ipAddress = sharedPref.getString(IP_PREF, "");
+                                ipPort = sharedPref.getString(PORT_PREF, "");
+                                coNo = sharedPref.getString(CONO_PREF, "");
+                                Max_Voch = sharedPref.getString(maxVoch_PREF, "");
+                                Max_Order = sharedPref.getString(max_Order_PREF, "");
+                                ip_settings_dialog.dismiss();
+                                mydatabase.itemsDao().deleteAll();
+                                mydatabase.itemUnitsDao().deleteAll();
+                                mydatabase.customers_dao().deleteAll();
+                                mydatabase.itemsBalanceDao().deleteAll();
+                                listAlItemsBalances.clear();
 //                            appDatabase.usersDao().deleteAll();
-                            mydatabase.itemUnitsDao().deleteAll();
-                            ImportData.AllImportItemlist.clear();
-                            allUnitDetails.clear();
-                            allCustomers.clear();
+                                mydatabase.itemUnitsDao().deleteAll();
+                                ImportData.AllImportItemlist.clear();
+                                allUnitDetails.clear();
+                                allCustomers.clear();
 
-                                    listAllVendor.clear();
-                           allUsers.clear();
-                            importData=new ImportData(Login.this);
-                //          importData.getAllItems3();
-
-
-                            importData.getAllItems(new ImportData.GetItemsCallBack() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-
-                                    try {
-
-                                        JSONArray itemsArray = response.getJSONArray("Items_Master");
-
-                                        for (int i = 0; i < itemsArray.length(); i++) {
-
-                                            Items item = new Items();
-                                            item.setNAME(itemsArray.getJSONObject(i).getString("NAME"));
-                                            item.setBARCODE(itemsArray.getJSONObject(i).getString("BARCODE"));
-                                            item.setITEMNO(itemsArray.getJSONObject(i).getString("ITEMNO"));
-
-                                            item.setItemK(itemsArray.getJSONObject(i).getString("ItemK"));
-                                            item.setF_D(Double.parseDouble(itemsArray.getJSONObject(i).getString("F_D")));
-                                            item.setCATEOGRYID(itemsArray.getJSONObject(i).getString("CATEOGRYID"));
-
-                                            item.setTAXPERC(Double.parseDouble(itemsArray.getJSONObject(i).getString("TAXPERC")) / 100);
-                                            item.setQty(1);
-
-                                            ImportData.AllImportItemlist.add(item);
-
-                                        }
-
-                                        mydatabase.itemsDao().addAll(ImportData.AllImportItemlist);
-
-                                        JSONArray unitsArray = response.getJSONArray("Item_Unit_Details");
-
-                                        for (int i = 0; i < unitsArray.length(); i++) {
-
-                                            Item_Unit_Details itemUnitDetails = new Item_Unit_Details();
-                                            itemUnitDetails.setCompanyNo(unitsArray.getJSONObject(i).getString("COMAPNYNO"));
-                                            itemUnitDetails.setItemNo(unitsArray.getJSONObject(i).getString("ITEMNO"));
-                                            itemUnitDetails.setUnitId(unitsArray.getJSONObject(i).getString("UNITID"));
-                                            itemUnitDetails.setConvRate(Double.parseDouble(unitsArray.getJSONObject(i).getString("CONVRATE")));
-
-                                            allUnitDetails.add(itemUnitDetails);
-
-                                        }
-
-                                        mydatabase.itemUnitsDao().addAll(allUnitDetails);
-
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                                listAllVendor.clear();
+                                allUsers.clear();
+                                importData=new ImportData(Login.this);
+                                //          importData.getAllItems3();
 
 
-                                    importData.getAllCustomers(new ImportData.GetCustomersCallBack() {
-                                        @Override
-                                        public void onResponse(JSONArray response) {
+                                importData.getAllItems(new ImportData.GetItemsCallBack() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
 
-                                            for (int i = 0; i < response.length(); i++) {
+                                        try {
 
-                                                try {
+                                            JSONArray itemsArray = response.getJSONArray("Items_Master");
 
-                                                    allCustomers.add(new CustomerInfo(
-                                                            response.getJSONObject(i).getString("CUSTID"),
-                                                            response.getJSONObject(i).getString("CUSTNAME"),
-                                                            response.getJSONObject(i).getString("MOBILE"),
-                                                            1,0));
+                                            for (int i = 0; i < itemsArray.length(); i++) {
 
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
+                                                Items item = new Items();
+                                                item.setNAME(itemsArray.getJSONObject(i).getString("NAME"));
+                                                item.setBARCODE(itemsArray.getJSONObject(i).getString("BARCODE"));
+                                                item.setITEMNO(itemsArray.getJSONObject(i).getString("ITEMNO"));
+
+                                                item.setItemK(itemsArray.getJSONObject(i).getString("ItemK"));
+                                                item.setF_D(Double.parseDouble(itemsArray.getJSONObject(i).getString("F_D")));
+                                                item.setCATEOGRYID(itemsArray.getJSONObject(i).getString("CATEOGRYID"));
+
+                                                item.setTAXPERC(Double.parseDouble(itemsArray.getJSONObject(i).getString("TAXPERC")) / 100);
+                                                item.setQty(1);
+
+                                                ImportData.AllImportItemlist.add(item);
 
                                             }
 
-                                            mydatabase.customers_dao().addAll(allCustomers);
+                                            mydatabase.itemsDao().addAll(ImportData.AllImportItemlist);
 
-                                            importData.getAllUsers(new ImportData.GetUsersCallBack() {
-                                                @Override
-                                                public void onResponse(JSONArray response) {
+                                            JSONArray unitsArray = response.getJSONArray("Item_Unit_Details2");
 
+                                            for (int i = 0; i < unitsArray.length(); i++) {
+//[{"ITEMU":"كرتونة","ITEMOCODE":"6294003583712","ITEMBARCODE":"6294003583729","CALCQTY":"12","SALEPRICE":"39","PCLASS1":"0","PCLASS2":"0","PCLASS3":"0"},
+                                                Item_Unit_Details itemUnitDetails = new Item_Unit_Details();
+                                            //    itemUnitDetails.setCompanyNo(unitsArray.getJSONObject(i).getString("COMAPNYNO"));
+                                                itemUnitDetails.setItemNo(unitsArray.getJSONObject(i).getString("ITEMOCODE"));
+                                                itemUnitDetails.setUnitId(unitsArray.getJSONObject(i).getString("ITEMU"));
+                                                itemUnitDetails.setConvRate(Double.parseDouble(unitsArray.getJSONObject(i).getString("CALCQTY")));
+                                                itemUnitDetails.setSALEPRICE(Double.parseDouble(unitsArray.getJSONObject(i).getString("SALEPRICE")));
+                                                itemUnitDetails.setITEMBARCODE(unitsArray.getJSONObject(i).getString("ITEMBARCODE"));
 
-                                                    for (int i = 0; i < response.length(); i++) {
-
-                                                        try {
-
-                                                            allUsers.add(new User(
-                                                                    response.getJSONObject(i).getString("SALESNO"),
-                                                                    response.getJSONObject(i).getString("ACCNAME").toLowerCase(Locale.ROOT),
-                                                                    response.getJSONObject(i).getString("USER_PASSWORD"),
-                                                                    Integer.parseInt(response.getJSONObject(i).getString("USERTYPE")),
-                                                                    Integer.parseInt("1"),
-                                                                    1));
-
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    }
-
-                                                    mydatabase.usersDao().addAll(allUsers);
-
-
-                                                }
-
-                                                @Override
-                                                public void onError(String error) {
-
-
-                                                }
-                                            }, ipAddress, ipPort, coNo);
-
-                                            importData.getAllVendor(new ImportData.GetUsersCallBack() {
-                                                @Override
-                                                public void onResponse(JSONArray response) {
-
-
-                                                    for (int i = 0; i < response.length(); i++) {
-
-                                                        try {
-                                                            CustomerInfo vendourInfo = new CustomerInfo();
-                                                            vendourInfo.setCustomerName( response.getJSONObject(i).getString("AccNameA"));
-                                                            vendourInfo.setCustomerId( response.getJSONObject(i).getString("AccCode"));
-                                                            vendourInfo.setIsVendor(1);
-                                                            // vendourInfo.setSelect(0);
-                                                            listAllVendor.add(vendourInfo);
-                                                            mydatabase.customers_dao().addAll(listAllVendor);
-//                                                            allUsers.add(new User(
-//                                                                    response.getJSONObject(i).getString(""),
-//                                                                    response.getJSONObject(i).getString("ACCNAME").toLowerCase(Locale.ROOT),
-//                                                                    response.getJSONObject(i).getString("USER_PASSWORD"),
-//                                                                    Integer.parseInt(response.getJSONObject(i).getString("USERTYPE")),
-//                                                                    Integer.parseInt("1"),
-//                                                                    1));
-
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    }
-
-                                                   // mydatabase.usersDao().addAll(allUsers);
-
-
-                                                }
-
-                                                @Override
-                                                public void onError(String error) {
-
-
-                                                }
-                                            }, "10.0.0.22:8081", ipPort, coNo);
-                                        }
-
-                                        @Override
-                                        public void onError(String error) {
-
-                                            if (!((error + "").contains("SSLHandshakeException") || (error + "").equals("null") ||
-                                                    (error + "").contains("ConnectException") || (error + "").contains("NoRouteToHostException"))) {
+                                                Log.e("ITEMBARCODE==",unitsArray.getJSONObject(i).getString("ITEMBARCODE"));
+                                                allUnitDetails.add(itemUnitDetails);
 
                                             }
 
+                                            mydatabase.itemUnitsDao().addAll(allUnitDetails);
 
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
                                         }
-                                    });
-                                }
-
-                                @Override
-                                public void onError(String error) {
-
-                                    if (!((error + "").contains("SSLHandshakeException") || (error + "").equals("null") ||
-                                            (error + "").contains("ConnectException") || (error + "").contains("NoRouteToHostException"))) {
 
 
+                                        importData.getAllCustomers(new ImportData.GetCustomersCallBack() {
+                                            @Override
+                                            public void onResponse(JSONArray response) {
+
+                                                for (int i = 0; i < response.length(); i++) {
+
+                                                    try {
+
+                                                        allCustomers.add(new CustomerInfo(
+                                                                response.getJSONObject(i).getString("CUSTID"),
+                                                                response.getJSONObject(i).getString("CUSTNAME"),
+                                                                response.getJSONObject(i).getString("MOBILE"),
+                                                                1,0));
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                }
+
+                                                mydatabase.customers_dao().addAll(allCustomers);
+
+                                                importData.getAllUsers(new ImportData.GetUsersCallBack() {
+                                                    @Override
+                                                    public void onResponse(JSONArray response) {
+
+
+                                                        for (int i = 0; i < response.length(); i++) {
+
+                                                            try {
+
+                                                                allUsers.add(new User(
+                                                                        response.getJSONObject(i).getString("SALESNO"),
+                                                                        response.getJSONObject(i).getString("ACCNAME").toLowerCase(Locale.ROOT),
+                                                                        response.getJSONObject(i).getString("USER_PASSWORD"),
+                                                                        Integer.parseInt(response.getJSONObject(i).getString("USERTYPE")),
+                                                                        Integer.parseInt("1"),
+                                                                        1));
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+
+                                                        }
+
+                                                        mydatabase.usersDao().addAll(allUsers);
+
+                                                        importData.getAllVendor(new ImportData.GetUsersCallBack() {
+                                                            @Override
+                                                            public void onResponse(JSONArray response) {
+
+
+                                                                for (int i = 0; i < response.length(); i++) {
+
+                                                                    try {
+                                                                        CustomerInfo vendourInfo = new CustomerInfo();
+                                                                        vendourInfo.setCustomerName( response.getJSONObject(i).getString("AccNameA"));
+                                                                        vendourInfo.setCustomerId( response.getJSONObject(i).getString("AccCode"));
+                                                                        vendourInfo.setIsVendor(1);
+                                                                        // vendourInfo.setSelect(0);
+                                                                        listAllVendor.add(vendourInfo);
+
+//
+
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+
+                                                                }
+                                                                mydatabase.customers_dao().addAll(listAllVendor);
+                                                                importData.getItemsBalance(new ImportData.GetItemsBalanceCallBack() {
+                                                                    @Override
+                                                                    public void onResponse(JSONObject response) {
+                                                                        try {
+                                                                            JSONArray itemsArray = response.getJSONArray("SalesMan_Items_Balance");
+
+                                                                            for (int i = 0; i < itemsArray.length(); i++) {
+                                                                                ItemsBalance itemsBalance = new ItemsBalance();
+
+                                                                                itemsBalance.setCOMAPNYNO(itemsArray.getJSONObject(i).getString("COMAPNYNO"));
+                                                                                itemsBalance.setQTY(itemsArray.getJSONObject(i).getString("QTY"));
+                                                                                itemsBalance.setItemOCode(itemsArray.getJSONObject(i).getString("ItemOCode"));
+                                                                                itemsBalance.setSTOCK_CODE(itemsArray.getJSONObject(i).getString("STOCK_CODE"));
+
+                                                                                listAlItemsBalances.add(itemsBalance);
+                                                                            }
+                                                                            Log.e("listAlItemsBalances===",listAlItemsBalances.size()+"");
+                                                                            mydatabase.itemsBalanceDao().addAll(listAlItemsBalances);
+                                                                            importData. fetchItemSwitchData("01/01/2021","31/12/2022");
+                                                                        }catch (Exception e)
+                                                                        {
+                                                                            Log.e("Exception===",e.getMessage()+"");
+                                                                        }
+
+//
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onError(String error) {
+
+                                                                    }
+                                                                });
+
+
+                                                            }
+
+                                                            @Override
+                                                            public void onError(String error) {
+
+
+                                                            }
+                                                        }, ipAddress, ipPort, coNo);
+                                                    }
+
+                                                    @Override
+                                                    public void onError(String error) {
+
+
+                                                    }
+                                                }, ipAddress, ipPort, coNo);
+
+
+
+
+                                            }
+
+                                            @Override
+                                            public void onError(String error) {
+
+                                                if (!((error + "").contains("SSLHandshakeException") || (error + "").equals("null") ||
+                                                        (error + "").contains("ConnectException") || (error + "").contains("NoRouteToHostException"))) {
+
+                                                }
+
+
+                                            }
+                                        });
                                     }
 
-                                }
-                            });
+                                    @Override
+                                    public void onError(String error) {
+
+                                        if (!((error + "").contains("SSLHandshakeException") || (error + "").equals("null") ||
+                                                (error + "").contains("ConnectException") || (error + "").contains("NoRouteToHostException"))) {
+
+
+                                        }
+
+                                    }
+                                });
 
 
 
-                            ip_settings_dialog.dismiss();
-                                } else {
+                                ip_settings_dialog.dismiss();
 
-                                    textInputOrderMaxNu.setError(getString(R.string.required));
-
-
-                                }
-                            } else {
-
-                                textInputMaxVoch.setError(getString(R.string.required));
-
-
-                            }
                         } else {
 
-                            textInputCoNo.setError(getString(R.string.required));
+                            textInputMaxVoch.setError(getString(R.string.required));
 
 
                         }
+                    } else {
+
+                        textInputCoNo.setError(getString(R.string.required));
+
+
+                    }
 
 
 
@@ -654,6 +738,336 @@ public class Login extends AppCompatActivity {
 
             }
         });
+//        okBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                String ipAddress1 = ipEdt.getText().toString().trim();
+//                String port1 = portEdt.getText().toString().trim();
+//                String coNo1 = coNoEdt.getText().toString().trim();
+//              String maxvo1 =maxVochEdt.getText().toString().trim();
+//                String maxOrder =MaxOrderEdt.getText().toString().trim();
+//                if (!ipAddress1.equals("")) {
+//
+//
+//
+//                        if (!coNo1.equals(""))
+//                        {
+//                            if (!maxvo1.equals(""))
+//                            {
+//                                if (!maxOrder.equals(""))
+//                                {
+//                            SharedPreferences.Editor editor = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE).edit();
+//                            editor.putString(IP_PREF, ipAddress1);
+//                            editor.putString(PORT_PREF, port1);
+//                            editor.putString(CONO_PREF, coNo1);
+//
+//                            if(!maxOrder.equals(""))
+//                                editor.putString(max_Order_PREF, maxOrder);
+//                            else
+//                                editor.putString(max_Order_PREF, "1");
+//
+//                           if(maxvo1.trim().length()!=0)
+//                               editor.putString(maxVoch_PREF, maxvo1);
+//                           else
+//                               editor.putString(maxVoch_PREF, "1");
+//                            editor.apply();
+//
+//                            ipAddress = sharedPref.getString(IP_PREF, "");
+//                            ipPort = sharedPref.getString(PORT_PREF, "");
+//                            coNo = sharedPref.getString(CONO_PREF, "");
+//                            Max_Voch = sharedPref.getString(maxVoch_PREF, "");
+//                            Max_Order = sharedPref.getString(max_Order_PREF, "");
+//                            ip_settings_dialog.dismiss();
+//                          mydatabase.itemsDao().deleteAll();
+//                            mydatabase.itemUnitsDao().deleteAll();
+//                        mydatabase.customers_dao().deleteAll();
+//                                    mydatabase.itemsBalanceDao().deleteAll();
+//                                    listAlItemsBalances.clear();
+////                            appDatabase.usersDao().deleteAll();
+//                            mydatabase.itemUnitsDao().deleteAll();
+//                            ImportData.AllImportItemlist.clear();
+//                            allUnitDetails.clear();
+//                            allCustomers.clear();
+//
+//                                    listAllVendor.clear();
+//                           allUsers.clear();
+//                            importData=new ImportData(Login.this);
+//                //          importData.getAllItems3();
+//
+//
+//                            importData.getAllItems(new ImportData.GetItemsCallBack() {
+//                                @Override
+//                                public void onResponse(JSONObject response) {
+//
+//                                    try {
+//
+//                                        JSONArray itemsArray = response.getJSONArray("Items_Master");
+//
+//                                        for (int i = 0; i < itemsArray.length(); i++) {
+//
+//                                            Items item = new Items();
+//                                            item.setNAME(itemsArray.getJSONObject(i).getString("NAME"));
+//                                            item.setBARCODE(itemsArray.getJSONObject(i).getString("BARCODE"));
+//                                            item.setITEMNO(itemsArray.getJSONObject(i).getString("ITEMNO"));
+//
+//                                            item.setItemK(itemsArray.getJSONObject(i).getString("ItemK"));
+//                                            item.setF_D(Double.parseDouble(itemsArray.getJSONObject(i).getString("F_D")));
+//                                            item.setCATEOGRYID(itemsArray.getJSONObject(i).getString("CATEOGRYID"));
+//
+//                                            item.setTAXPERC(Double.parseDouble(itemsArray.getJSONObject(i).getString("TAXPERC")) / 100);
+//                                            item.setQty(1);
+//
+//                                            ImportData.AllImportItemlist.add(item);
+//
+//                                        }
+//
+//                                        mydatabase.itemsDao().addAll(ImportData.AllImportItemlist);
+//
+//                                        JSONArray unitsArray = response.getJSONArray("Item_Unit_Details");
+//
+//                                        for (int i = 0; i < unitsArray.length(); i++) {
+//
+//                                            Item_Unit_Details itemUnitDetails = new Item_Unit_Details();
+//                                            itemUnitDetails.setCompanyNo(unitsArray.getJSONObject(i).getString("COMAPNYNO"));
+//                                            itemUnitDetails.setItemNo(unitsArray.getJSONObject(i).getString("ITEMNO"));
+//                                            itemUnitDetails.setUnitId(unitsArray.getJSONObject(i).getString("UNITID"));
+//                                            itemUnitDetails.setConvRate(Double.parseDouble(unitsArray.getJSONObject(i).getString("CONVRATE")));
+//
+//                                            allUnitDetails.add(itemUnitDetails);
+//
+//                                        }
+//
+//                                        mydatabase.itemUnitsDao().addAll(allUnitDetails);
+//
+//                                    } catch (JSONException e) {
+//                                        e.printStackTrace();
+//                                    }
+//
+//
+//                                    importData.getAllCustomers(new ImportData.GetCustomersCallBack() {
+//                                        @Override
+//                                        public void onResponse(JSONArray response) {
+//
+//                                            for (int i = 0; i < response.length(); i++) {
+//
+//                                                try {
+//
+//                                                    allCustomers.add(new CustomerInfo(
+//                                                            response.getJSONObject(i).getString("CUSTID"),
+//                                                            response.getJSONObject(i).getString("CUSTNAME"),
+//                                                            response.getJSONObject(i).getString("MOBILE"),
+//                                                            1,0));
+//
+//                                                } catch (JSONException e) {
+//                                                    e.printStackTrace();
+//                                                }
+//
+//                                            }
+//
+//                                            mydatabase.customers_dao().addAll(allCustomers);
+//
+//                                            importData.getAllUsers(new ImportData.GetUsersCallBack() {
+//                                                @Override
+//                                                public void onResponse(JSONArray response) {
+//
+//
+//                                                    for (int i = 0; i < response.length(); i++) {
+//
+//                                                        try {
+//
+//                                                            allUsers.add(new User(
+//                                                                    response.getJSONObject(i).getString("SALESNO"),
+//                                                                    response.getJSONObject(i).getString("ACCNAME").toLowerCase(Locale.ROOT),
+//                                                                    response.getJSONObject(i).getString("USER_PASSWORD"),
+//                                                                    Integer.parseInt(response.getJSONObject(i).getString("USERTYPE")),
+//                                                                    Integer.parseInt("1"),
+//                                                                    1));
+//
+//                                                        } catch (JSONException e) {
+//                                                            e.printStackTrace();
+//                                                        }
+//
+//                                                    }
+//
+//                                                    mydatabase.usersDao().addAll(allUsers);
+//
+//                                                    importData.getAllVendor(new ImportData.GetUsersCallBack() {
+//                                                        @Override
+//                                                        public void onResponse(JSONArray response) {
+//
+//
+//                                                            for (int i = 0; i < response.length(); i++) {
+//
+//                                                                try {
+//                                                                    CustomerInfo vendourInfo = new CustomerInfo();
+//                                                                    vendourInfo.setCustomerName( response.getJSONObject(i).getString("AccNameA"));
+//                                                                    vendourInfo.setCustomerId( response.getJSONObject(i).getString("AccCode"));
+//                                                                    vendourInfo.setIsVendor(1);
+//                                                                    // vendourInfo.setSelect(0);
+//                                                                    listAllVendor.add(vendourInfo);
+//
+////                                                            allUsers.add(new User(
+////                                                                    response.getJSONObject(i).getString(""),
+////                                                                    response.getJSONObject(i).getString("ACCNAME").toLowerCase(Locale.ROOT),
+////                                                                    response.getJSONObject(i).getString("USER_PASSWORD"),
+////                                                                    Integer.parseInt(response.getJSONObject(i).getString("USERTYPE")),
+////                                                                    Integer.parseInt("1"),
+////                                                                    1));
+//
+//                                                                } catch (JSONException e) {
+//                                                                    e.printStackTrace();
+//                                                                }
+//
+//                                                            }
+//                                                            mydatabase.customers_dao().addAll(listAllVendor);
+//                                                            importData.getItemsBalance(new ImportData.GetItemsBalanceCallBack() {
+//                                                                @Override
+//                                                                public void onResponse(JSONObject response) {
+//                                                                    try {
+//                                                                        JSONArray itemsArray = response.getJSONArray("SalesMan_Items_Balance");
+//
+//                                                                        for (int i = 0; i < itemsArray.length(); i++) {
+//                                                                            ItemsBalance itemsBalance = new ItemsBalance();
+//
+//                                                                                itemsBalance.setCOMAPNYNO(itemsArray.getJSONObject(i).getString("COMAPNYNO"));
+//                                                                                itemsBalance.setQTY(itemsArray.getJSONObject(i).getString("QTY"));
+//                                                                                itemsBalance.setItemOCode(itemsArray.getJSONObject(i).getString("ItemOCode"));
+//                                                                                itemsBalance.setSTOCK_CODE(itemsArray.getJSONObject(i).getString("STOCK_CODE"));
+//
+//                                                                                listAlItemsBalances.add(itemsBalance);
+//                                                                        }
+//                                                                        Log.e("listAlItemsBalances===",listAlItemsBalances.size()+"");
+//                                                                        mydatabase.itemsBalanceDao().addAll(listAlItemsBalances);
+//                                                                       importData. fetchItemSwitchData("01/01/2021","31/12/2022");
+//                                                                    }catch (Exception e)
+//                                                                    {
+//                                                                        Log.e("Exception===",e.getMessage()+"");
+//                                                                    }
+//
+////
+//                                                                }
+//
+//                                                                @Override
+//                                                                public void onError(String error) {
+//
+//                                                                }
+//                                                            });
+////                                                            importData.getItemsBalance(new ImportData.GetItemsBalanceCallBack() {
+////                                                                @Override
+////                                                                public void onResponse(JSONObject response) {
+////                                                                    try {
+////                                                                        JSONArray itemsArray = response.getJSONArray("SalesMan_Items_Balance");
+////                                                                        for (int i = 0; i < response.length(); i++) {
+////
+////                                                                            try {
+////
+////                                                                                ItemsBalance itemsBalance = new ItemsBalance();
+////                                                                                Log.e("itemsBalance",itemsBalance.getCOMAPNYNO()+"");
+////                                                                                itemsBalance.setCOMAPNYNO(itemsArray.getJSONObject(i).getString("COMAPNYNO"));
+////                                                                                itemsBalance.setQTY(itemsArray.getJSONObject(i).getString("QTY"));
+////                                                                                itemsBalance.setItemOCode(itemsArray.getJSONObject(i).getString("ItemOCode"));
+////                                                                                itemsBalance.setSTOCK_CODE(itemsArray.getJSONObject(i).getString("STOCK_CODE"));
+////
+////                                                                                listAlItemsBalances.add(itemsBalance);
+////
+////
+////                                                                            } catch (JSONException e) {
+////                                                                                e.printStackTrace();
+////                                                                            }
+////                                                                        }
+////                                                                    }catch (Exception e ){
+////
+////                                                                    }
+////                                                                    mydatabase.itemsBalanceDao().addAll(listAlItemsBalances);
+////                                                                }
+////
+////                                                                @Override
+////                                                                public void onError(String error) {
+////
+////                                                                }
+////                                                            });
+//
+//                                                        }
+//
+//                                                        @Override
+//                                                        public void onError(String error) {
+//
+//
+//                                                        }
+//                                                    }, ipAddress, ipPort, coNo);
+//                                                }
+//
+//                                                @Override
+//                                                public void onError(String error) {
+//
+//
+//                                                }
+//                                            }, ipAddress, ipPort, coNo);
+//
+//
+//
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void onError(String error) {
+//
+//                                            if (!((error + "").contains("SSLHandshakeException") || (error + "").equals("null") ||
+//                                                    (error + "").contains("ConnectException") || (error + "").contains("NoRouteToHostException"))) {
+//
+//                                            }
+//
+//
+//                                        }
+//                                    });
+//                                }
+//
+//                                @Override
+//                                public void onError(String error) {
+//
+//                                    if (!((error + "").contains("SSLHandshakeException") || (error + "").equals("null") ||
+//                                            (error + "").contains("ConnectException") || (error + "").contains("NoRouteToHostException"))) {
+//
+//
+//                                    }
+//
+//                                }
+//                            });
+//
+//
+//
+//                            ip_settings_dialog.dismiss();
+//                                } else {
+//
+//                                    textInputOrderMaxNu.setError(getString(R.string.required));
+//
+//
+//                                }
+//                            } else {
+//
+//                                textInputMaxVoch.setError(getString(R.string.required));
+//
+//
+//                            }
+//                        } else {
+//
+//                            textInputCoNo.setError(getString(R.string.required));
+//
+//
+//                        }
+//
+//
+//
+//                } else {
+//
+//                    textInputIpAddress.setError(getString(R.string.required));
+//
+//
+//                }
+//
+//            }
+//        });
 
     }
     void checkUnameAndPass() {

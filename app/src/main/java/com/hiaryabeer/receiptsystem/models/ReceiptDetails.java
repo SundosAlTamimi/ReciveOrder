@@ -16,7 +16,7 @@ public class ReceiptDetails {
     private int  Serial;
 
     @ColumnInfo(name = "vhfNo")
-    private int vhfNo;
+    private long vhfNo;
 
     @ColumnInfo(name = "Date")
     private String date;
@@ -50,7 +50,7 @@ public class ReceiptDetails {
     private double price;
 
     @ColumnInfo(name = "Customer_ID")
-    private int customerId;
+    private String customerId;
     @ColumnInfo(name = "Unit")
     private String Unit;
     @ColumnInfo(name = "IS_Posted", defaultValue = "0")
@@ -101,6 +101,17 @@ public class ReceiptDetails {
     @ColumnInfo(name = "Free")
     private double  Free;
 
+    @ColumnInfo(name = "TransNo")
+    private String TransNo;
+
+    public String getTransNo() {
+        return TransNo;
+    }
+
+    public void setTransNo(String transNo) {
+        TransNo = transNo;
+    }
+
     public double getFree() {
         return Free;
     }
@@ -125,11 +136,11 @@ public class ReceiptDetails {
         Serial = serial;
     }
 
-    public int getVhfNo() {
+    public long getVhfNo() {
         return vhfNo;
     }
 
-    public void setVhfNo(int vhfNo) {
+    public void setVhfNo(long vhfNo) {
         this.vhfNo = vhfNo;
     }
 
@@ -253,11 +264,11 @@ public class ReceiptDetails {
         this.price = price;
     }
 
-    public int getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
@@ -325,15 +336,15 @@ public class ReceiptDetails {
             obj.put("TAXPERCENT", taxPercent);
             obj.put("COMAPNYNO", ExportData.CONO);
             obj.put("ISPOSTED", "0");
-            obj.put("VOUCHERYEAR", "2022");
+            obj.put("VOUCHERYEAR", "2023");
             obj.put("ITEM_DESCRITION", "");
             obj.put("SERIAL_CODE", "");
             obj.put("ITEM_SERIAL_CODE", "");
 
-            obj.put("WHICHUNIT", WhichUNIT);
-            obj.put("WHICHUNITSTR", WhichUNITSTR);
+            obj.put("WHICHUNIT", "0");
+            obj.put("WHICHUNITSTR", "");
 
-            obj.put("WHICHUQTY", WHICHUQTY);
+            obj.put("WHICHUQTY", "");
 
             obj.put("ENTERQTY", qty);
             obj.put("ENTERPRICE", price);

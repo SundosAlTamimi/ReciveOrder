@@ -21,6 +21,27 @@ public class Item_Unit_Details {
 
     @ColumnInfo(name = "CONVRATE")
     private double convRate;
+    @ColumnInfo(name = "SALEPRICE",defaultValue = "1")
+    private double SALEPRICE;
+
+    public double getSALEPRICE() {
+        return SALEPRICE;
+    }
+
+    public void setSALEPRICE(double SALEPRICE) {
+        this.SALEPRICE = SALEPRICE;
+    }
+
+    @ColumnInfo(name = "ITEMBARCODE")
+    private String ITEMBARCODE;
+
+    public String getITEMBARCODE() {
+        return ITEMBARCODE;
+    }
+
+    public void setITEMBARCODE(String ITEMBARCODE) {
+        this.ITEMBARCODE = ITEMBARCODE;
+    }
 
     public int getId() {
         return id;
